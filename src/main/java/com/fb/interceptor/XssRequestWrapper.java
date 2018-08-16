@@ -49,15 +49,14 @@ public class XssRequestWrapper extends HttpServletRequestWrapper {
     @Override
     public Map<String, String[]> getParameterMap() {
         HashMap<String, String[]> newMap = new HashMap();
-        HashMap<String, String[]> oldMap = (HashMap)super.getParameterMap();
+        Map<String, String[]> oldMap = super.getParameterMap();
         for(String key : oldMap.keySet()){
-
                 newMap.put(key,this.getNewValues(key,oldMap));
         }
         return newMap;
     }
 
-    private String[] getNewValues(String key,HashMap<String, String[]> map){
+    private String[] getNewValues(String key,Map<String, String[]> map){
         if(map==null){
             return null;
         }
