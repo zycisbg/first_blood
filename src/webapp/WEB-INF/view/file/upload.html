@@ -1,0 +1,183 @@
+<#include "../macro/nohf.ftl" />
+<@mainLayout>
+<link href="${ctx!}/assets/js/cropper/dist/cropper.css" rel="stylesheet">
+<link href="${ctx!}/assets/js/cropper/css/main.css" rel="stylesheet">
+<!--[if IE]>
+		<script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
+	<![endif]-->
+<style>
+.preview-lg {
+  width: 200px;
+  height: 150px;
+}
+.upload_bg{
+background-image: url(${ctx!}/assets/images/upload_bg.png);
+background-position: 25% 50%;
+background-repeat: no-repeat;
+background-attachment: fixed;
+}
+</style>
+<script>
+function fancyboxClose(){
+    parent.$.fancybox.close();
+}
+var $image;
+$(document).ready(function(){
+	$image = $('.img-container > img'),
+    $dataX = $('#dataX'),
+    $dataY = $('#dataY'),
+    $dataHeight = $('#dataHeight'),
+    $dataWidth = $('#dataWidth'),
+    $dataRotate = $('#dataRotate'),
+    options = {
+      // strict: false,
+      // responsive: false,
+      // checkImageOrigin: false
+
+      // modal: false,
+      // guides: false,
+      // highlight: false,
+      // background: false,
+
+      // autoCrop: false,
+      // autoCropArea: 0.5,
+      // dragCrop: false,
+      // movable: false,
+      // resizable: false,
+      // rotatable: false,
+      // zoomable: false,
+      // touchDragZoom: false,
+      // mouseWheelZoom: false,
+
+      // minCanvasWidth: 320,
+      // minCanvasHeight: 180,
+      // minCropBoxWidth: 160,
+      // minCropBoxHeight: 90,
+      // minContainerWidth: 320,
+      // minContainerHeight: 180,
+
+      // build: null,
+      // built: null,
+      // dragstart: null,
+      // dragmove: null,
+      // dragend: null,
+      // zoomin: null,
+      // zoomout: null,
+	  autoCrop:false,
+      aspectRatio: ${width!}/${height!},
+      preview: '.img-preview',
+      crop: function (data) {
+        $dataX.val(Math.round(data.x));
+        $dataY.val(Math.round(data.y));
+        $dataHeight.val(Math.round(data.height));
+        $dataWidth.val(Math.round(data.width));
+        $dataRotate.val(Math.round(data.rotate));
+      }
+    };
+});
+</script>
+<form class="avatar-form" id="avatar-form" action="${ctx!}/file/fileUploadToCut${suffix}" method="post">
+	<div class="row">
+		<div class="col-md-9" style="width:433px; float: left;">
+			<!-- <h3 class="page-header">Demo:</h3> -->
+			<div class="img-container upload_bg" style="width: 400px; height: 400px;">
+				<!-- <img src="${ctx!}/assets/images/upload_default.jpg" alt="Picture" id="upload_file_image"> -->
+				<img src="" alt="Picture" id="upload_file_image" class="hidden">
+			</div>
+		</div>
+		<div class="col-md-3" style="width: 240px; float: left;">
+			<!-- <h3 class="page-header">Preview:</h3> -->
+			<div class="docs-preview clearfix">
+				<div class="img-preview preview-lg"></div>
+				<!-- <div class="img-preview preview-md"></div>
+				<div class="img-preview preview-sm"></div>
+				<div class="img-preview preview-xs"></div> -->
+			</div>
+		</div>
+	</div>
+    <input name="image" id="image" type="hidden">
+    <input name="dataX" id="dataX" type="hidden">
+    <input name="dataY" id="dataY" type="hidden">
+    <input name="dataWidth" id="dataWidth" type="hidden">
+    <input name="dataHeight" id="dataHeight" type="hidden">
+    <input name="dataRotate" id="dataRotate" type="hidden">
+	<div style="text-align: center;">
+	<button class="btn btn-white btn-default btn-round" type="button" id="imgbtn_image" onclick="chooseImg('image');return false;" data-loading-text="上传中...">
+	<i class="ace-icon fa fa-cloud-upload blue bigger-120"></i> 上 传 
+	</button>
+	<button class="btn btn-white btn-default btn-round" type="button" id="submitGo" onclick="submitPost('image');return false;">
+		<i class="ace-icon fa fa-check red2"></i> 确 定 
+	</button>
+	<button class="btn btn-white btn-default btn-round" onclick="fancyboxClose();return false;">
+		<i class="ace-icon fa fa-times red2"></i> 取 消 
+	</button>
+	</div>
+</form>
+<div class="hidden">
+<script>
+var lw = '${lw!}';
+function submitPost(val){
+	$.ajax({
+        cache: true,
+        type: "POST",
+        url:'${ctx!}/file/fileUploadToCut${suffix}',
+        data:$('#avatar-form').serialize(),// 你的formid
+        async: false,
+        error: function(request) {
+            alert("Connection error");
+        },
+        success: function(data) {
+        	fancyboxClose();
+        	//上传成功，将值返回到父页面
+        	$("#preview_${idName!}",window.parent.document).attr("src",data).removeClass("hidden");
+        	$("#${idName!}",window.parent.document).val(data);
+        	window.parent.callBack('${idName!}', data);
+        }
+    });
+}
+function chooseImg(id) {
+	$("#chooseImgId").val(id);
+	$('#chooseImgFile').click();
+}
+function uploadImg(target) {
+	//检测上传文件的类型
+	var ext,idx;
+	if (target == ''){
+		alert('请选择需要上传的文件!');
+		return;
+	} else {
+		idx = target.lastIndexOf(".");
+		if (idx != -1){
+			ext = target.substr(idx+1).toUpperCase();
+			ext = ext.toLowerCase( );
+			if (ext!='jpg'&&ext!='png'&&ext!='jpeg'&& ext!='gif'){
+				alert('只能上传jpg,png,jpeg,gif类型的文件!');
+				return;
+			}
+		}
+	}
+	$('#imgbtn_' + $("#chooseImgId").val()).button('loading');
+	$('#uploadImgForm').submit();
+}
+function uploadHandler(_json) {
+	var json = eval('(' + _json + ')');
+	if (json.code == 200) {
+		$('#' + json.id).val(json.uri);
+		//$('#preview_' + json.id).attr('src', json.uri).removeClass('hidden');
+		$('#upload_file_' + json.id).removeClass('hidden').cropper('reset').cropper('replace', json.uri);//使用replace进行图片的替换
+	}else{
+		alert(json.message);
+	}
+	$('#imgbtn_' + json.id).button('reset');
+}
+</script>
+<form id="uploadImgForm" action="${ctx!}/file/fileUploadToLocal${suffix}" method="post" target="frameFile" enctype="multipart/form-data">
+	<input id="chooseImgId" type="hidden" name="id" value="" />
+	<input id="chooseImgFile" type="file" name="fp" onchange="uploadImg(this.value);" accept=".gif,.jpg,.jpeg,.png"/>
+</form>
+<iframe id="frameFile" name="frameFile"></iframe>
+</div>
+<script src="${ctx!}/assets/js/cropper/assets/js/bootstrap.min.js"></script>
+<script src="${ctx!}/assets/js/cropper/dist/cropper.js"></script>
+<script src="${ctx!}/assets/js/cropper/js/main.js"></script>
+</@mainLayout>

@@ -1,0 +1,58 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/role/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>系统角色列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i><#if model.id??>编辑<#else />添加</#if>系统角色</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/sys/role<#if model.id??>/edit<#else />/add</#if>${suffix!}" method="post">
+<#if model.id??>
+<input type="hidden" name="model.id" value="${model.id}" />
+</#if>
+<!-- 表单项开始 -->
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="name"><i class="rr">*</i>角色名:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="form-field-icon-1" name="model.name" value="${model.name!}" maxlength="50" btvd-type="required">
+			<i class="ace-icon fa fa-mortar-board blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="remark">备注:</label>
+	<div class="col-md-3">
+		<textarea id="form-field-8" class="autosize-transition form-control" id="remark" name="model.remark" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 100px;">${model.remark!}</textarea>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="status"><i class="rr">*</i>状态:</label>
+	<div class="col-md-10">
+		<div class="radio">
+			<label>
+				<input name="model.status" type="radio" value="0" class="ace" <#if !model.status?? || model.status == '0'> checked</#if> />
+				<span class="lbl">正常</span>
+			</label>
+			<label>
+				<input name="model.status" type="radio" value="1" class="ace" <#if model.status?? && model.status == '1'> checked</#if> />
+				<span class="lbl">禁用</span>
+			</label>
+		</div>
+	</div>
+</div>
+<!-- 表单项结束 -->
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa <#if model.id??>fa-edit<#else />fa-save</#if>"></i> <#if model.id??> 编 辑 <#else /> 添 加 </#if></span>
+		</button>
+	</div>
+</div>
+</form>
+<!-- 表单结束 -->
+</@mainLayout>

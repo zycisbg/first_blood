@@ -1,0 +1,133 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<script type="text/javascript">var ari_width = 400, ari_heigth = 400;</script>
+<@preview />
+<@umeditor />
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon fa fa-gears bigger-110" style="color:${tabStyle!}"></i>系统基本配置</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<script>
+function question(val){
+	$("#question_review").attr("path","${ctx}/assets/images/question/"+val+".png");
+}
+</script>
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/sys/passwordConfig/edit${suffix!}" method="post">
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${password_regulation.name!}:</label>
+		<div class="col-md-3">
+			<div class="radio">
+				<label>
+					<input name="password_regulation" type="radio" value="1" class="ace" <#if password_regulation.value?? && password_regulation.value=='1'> checked</#if> />
+					<span class="lbl">开启</span>
+				</label>
+				<label>
+					<input name="password_regulation" type="radio" value="0" class="ace" <#if password_regulation.value?? && password_regulation.value=='0'> checked</#if> />
+					<span class="lbl">关闭</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${password_sms_verification.name!}:</label>
+		<div class="col-md-3">
+			<div class="radio">
+				<label>
+					<input name="password_sms_verification" type="radio" value="1" class="ace" <#if password_sms_verification.value?? && password_sms_verification.value=='1'> checked</#if> />
+					<span class="lbl">开启</span>
+				</label>
+				<label>
+					<input name="password_sms_verification" type="radio" value="0" class="ace" <#if password_sms_verification.value?? && password_sms_verification.value=='0'> checked</#if> />
+					<span class="lbl">关闭</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${report_password_sms_verification.name!}:</label>
+		<div class="col-md-3">
+			<div class="radio">
+				<label>
+					<input name="report_password_sms_verification" type="radio" value="1" class="ace" <#if report_password_sms_verification.value?? && report_password_sms_verification.value=='1'> checked</#if> />
+				<span class="lbl">开启</span>
+				</label>
+				<label>
+					<input name="report_password_sms_verification" type="radio" value="0" class="ace" <#if report_password_sms_verification.value?? && report_password_sms_verification.value=='0'> checked</#if> />
+				<span class="lbl">关闭</span>
+				</label>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${password_interval_day.name!}:</label>
+		<div class="col-md-8">
+			<input type="number" name="password_interval_day" value="${password_interval_day.value!}" style="margin-left: 10px;">
+		</div>
+	</div>
+
+
+	<hr />
+	<div class="wizard-actions">
+		<div class="col-md-offset-2 col-md-3">
+			<button class="btn btn-primary btn-xs col-md-6" type="submit" data-loading-text="处理中...">
+				<span class="bigger-110"><i class="ace-icon fa fa-edit"></i>修改基本配置</span>
+			</button>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+    var um = UM.getEditor('content', {
+	toolbar : [ 'source', //源代码
+		'anchor', //锚点
+		'undo', //撤销
+		'redo', //重做
+		'forecolor', //字体颜色
+		'backcolor', //背景色
+		'bold', //加粗
+		'italic', //斜体
+		'underline', //下划线
+		'strikethrough', //删除线
+		'link', //超链接
+		'unlink', //取消链接
+		'subscript', //下标
+		'superscript', //上标
+		'removeformat', //清除格式
+		'cleardoc', //清空文档
+		'preview' //预览
+		]
+	});
+    um.setHeight(100);
+    um.setWidth(300);
+</script>
+<div class="hidden">
+<script>
+	function chooseImg(id) {
+		$("#chooseImgId").val(id);
+		$('#chooseImgFile').click();
+	}
+	function uploadImg() {
+		$('#imgbtn_' + $("#chooseImgId").val()).button('loading');
+		$('#uploadImgForm').submit();
+	}
+	function uploadHandler(_json) {
+		var json = eval('(' + _json + ')');
+		if (json.code == 200) {
+			$('#' + json.id).val(json.uri);
+			$('#preview_' + json.id).attr('src', json.uri).removeClass('hidden');
+		}
+		$('#imgbtn_' + json.id).button('reset');
+	}
+	</script>
+	<form id="uploadImgForm" action="${ctx!}/file/fileUpload${suffix}" method="post" target="frameFile" enctype="multipart/form-data">
+		<input id="chooseImgId" type="hidden" name="id" value="" />
+		<input id="chooseImgFile" type="file" name="fp" onchange="uploadImg();" />
+	</form>
+	<iframe id="frameFile" name="frameFile"></iframe>
+</div>
+<!-- 表单结束 -->
+</@mainLayout>

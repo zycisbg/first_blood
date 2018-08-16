@@ -1,0 +1,106 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/dictionary/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>字典列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i><#if model.id??>编辑<#else />添加</#if>字典</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<script>
+function selectFre(th){
+	var cc = $(th).val();
+	if(cc!=null && cc!='' && cc=='0'){
+		//自定义
+		var html = "<input style='margin-right:10px' type='text' name='inputChatCode' id='inputChatCode' value='' />";
+		$("#chat_code").before(html);
+	}else{
+		$("#inputChatCode").remove();
+	}
+}
+</script>
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/sys/dictionary<#if model.id??>/edit<#else />/add</#if>${suffix!}" method="post">
+<#if model.id??>
+<input type="hidden" name="model.id" value="${model.id}" />
+</#if>
+<!-- 表单项开始 -->
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="chat_code"><i class="rr">*</i>字典配置:</label>
+	<div class="col-md-8" id="div_chat_code">
+		<select name="selectChatCode" id="chat_code" onchange="selectFre(this)" btvd-type="required">
+			<#if (config?size<1)>
+			<option value="">--请选择--</option>
+			</#if>
+			<#list config as item>
+			<option value="${item.chat_code}">${item.chat_code}</option>
+			</#list>
+			<option value="0">--自定义--</option>
+		</select>
+		<span style="margin-left: 5px; color: #FF0000">请选择 或者 填写唯一标识码</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="label"><i class="rr">*</i>字典名称:</label>
+	<div class="col-md-5">
+		<input type="text" id="label" name="model.label" value="${model.label!}" class="col-md-5" maxlength="30" btvd-type="required" placeholder="请填写字典名称，例如：红色"/>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="val"><i class="rr">*</i>VALUE值:</label>
+	<div class="col-md-5">
+		<input type="text" id="val" name="model.val" value="${model.val!}" class="col-md-5" maxlength="255" btvd-type="required" placeholder="请填写VALUE值"/>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="color">颜色:</label>
+	<div style="float: left; padding-left: 12px;margin-right: -40px;">
+		<input id="colorpicker1" type="text" id="color" name="model.color" value="${model.color!}" class="col-md-6" maxlength="10" placeholder="默认黑色"/>
+	</div>
+	<div id="colorSelector" style="float: left;"><div style="background-color: #000000"></div></div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="sort"><i class="rr">*</i>排序:</label>
+	<div class="col-md-3">
+		<input type="text" id="sort" name="model.sort" value="${model.sort!}" class="col-md-6" maxlength="10" btvd-type="number" btvd-type="required" placeholder="值越小，越靠前"/>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="description">描述:</label>
+	<div class="col-md-3">
+		<textarea id="form-field-11" class="autosize-transition form-control" id="description" name="model.description" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 100px;">${model.description!}</textarea>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="stu"><i class="rr">*</i>状态:</label>
+	<div class="col-md-3">
+		<div class="radio">
+			<label>
+				<input name="model.stu" type="radio" value="1" class="ace" <#if !model.stu?? || model.stu+''=='1'> checked</#if> />
+				<span class="lbl">正常</span>
+			</label>
+			<label>
+				<input name="model.stu" type="radio" value="0" class="ace" <#if model.stu?? && model.stu+''=='0'> checked</#if> />
+				<span class="lbl">禁用</span>
+			</label>
+		</div>
+	</div>
+</div>
+<!-- 表单项结束 -->
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-3" style="width:80%">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa fa-edit"></i> <#if model.id??>编辑<#else />添加</#if></span>
+		</button>
+	</div>
+</div>
+</form>
+<!-- 表单结束 -->
+<script type="text/javascript">
+jQuery(function($) {
+	$('#colorpicker1').colorpicker();
+});
+</script>
+</@mainLayout>

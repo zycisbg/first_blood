@@ -1,0 +1,62 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/ugroup/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>用户组列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>对[<span style="color: #FF0000">${model.name!}</span>]进行角色分配</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<div class="alert alert-block alert-success">
+	<button type="button" class="close" data-dismiss="alert">
+		<i class="ace-icon fa fa-times"></i>
+	</button>
+	<i class="ace-icon fa fa-lightbulb-o bigger-130 green"></i>
+	<strong class="green">
+		<small>温馨提示：</small>
+	</strong>
+	<#if model.pid==0>
+		<span style="color:#FF0000">仅作为管理使用, 勾选的角色权限不会被用户所共有</span>
+	<#else />
+		用户组 所分配的角色 其对应的权限 归 本组内所有的用户 所共有！
+	</#if>
+</div>
+<div class="row">
+	<div class="col-sm-10">
+		<#list roles as role>
+			<div class="col-md-3" style="line-height: 40px;">
+				<label class="block">
+					<input name="roleIds" value="${role.id}" type="checkbox" <#if role.status==1+'' > disabled</#if> <#if (roleIds?? && roleIds?split(",")?seq_contains(role.id+'')) > checked</#if> class="ace ace-checkbox-2">
+					<span class="lbl bigger-120"> ${role.name!}</span>
+				</label>
+			</div>
+		</#list>
+	</div>
+</div>
+<hr />
+<form id="changerolesForm" action="${ctx!}/sys/ugroup/role${suffix!}" method="post">
+	<input type="hidden" id=""id"" name="id" value="${model.id!}" />
+	<input type="hidden" id="roleIds" name="roleIds" value="${roleIds!}" />
+	<div class="wizard-actions">
+		<div class="col-md-offset-2 col-md-10">
+			<button class="btn btn-primary btn-xs col-md-2" type="button" onclick="changeRoles();" data-loading-text="处理中...">
+				<span class="bigger-110"><i class="ace-icon fa <#if roleIds??>fa-edit<#else />fa-save</#if>"></i> <#if roleIds??>编辑<#else />添加</#if></span>
+			</button>
+		</div>
+	</div>
+</form>
+<script>
+function changeRoles() {
+	$('#submit-btn').button('loading');
+	var roleIds = '';
+	$(":checked:checked").each(function() {
+		roleIds += ',' + $(this).val();
+	});
+	if (roleIds.length > 0) {
+		roleIds = roleIds.substr(1);
+	}
+	$('#roleIds').val(roleIds);
+	$('#changerolesForm').submit();
+}
+</script>
+</@mainLayout>

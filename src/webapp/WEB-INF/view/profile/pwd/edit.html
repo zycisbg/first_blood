@@ -1,0 +1,62 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<@validate/>
+<script>
+	jQuery.validator.addMethod("regexPassword", function(value, element) {
+		return this.optional(element) || /^(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/.test(value);
+	}, "一个大写，一个小写，一个符号");
+	jQuery.validator.addMethod("same", function(value, element) {
+		return this.optional(element) || same(value);
+	}, "新密码不能与老密码重复");
+	function same(pwd) {
+		var oldPwd = $("#newpassword").val();
+		if (oldPwd == pwd)
+			return true;
+		else
+			return false;
+	}
+
+</script>
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>修改密码</a></li>
+</ul>
+<br />
+<@alertMsg />
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/profile/pwd/edit${suffix!}" method="post">
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="oldpassword">旧密码:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,messages:{required:'请输入旧密码'}}" type="password" type="text" id="oldpassword" name="oldpassword" placeholder="长度为 6 到 32 位" maxlength="32" btvd-type="required">
+			<i class="ace-icon fa fa-lock blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="newpassword">新密码:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,regexPassword:true,messages:{required:'请输入新密码',regexPassword:'密码至少包一个大写字母、一个小写字母及一个符号，长度至少8位'}}" type="password" type="text" id="newpassword" name="newpassword" maxlength="32" placeholder="长度为 6 到 32 位" btvd-type="minlength" btvd-minlength="6">
+			<i class="ace-icon fa fa-lock blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="renewpassword">重复密码:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,same:true,messages:{required:'请输入重复密码',same:'两次输入密码不一致'}}" type="password" type="text" id="renewpassword" name="renewpassword" maxlength="32" placeholder="长度为 6 到 32 位" btvd-type="equalTo" btvd-equalTo="#newpassword">
+			<i class="ace-icon fa fa-lock blue"></i>
+		</span>
+	</div>
+</div>
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa fa-edit"></i> 编 辑 </span>
+		</button>
+	</div>
+</div>
+</form>
+</@mainLayout>

@@ -1,0 +1,119 @@
+<#include "../../macro/pop.ftl" />
+<@mainLayout>
+<div id="accordion" class="accordion-style1 panel-group">
+	<#if model.user_agent?? && model.user_agent!=''>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true">
+					<i class="bigger-110 ace-icon fa fa-angle-down" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+					&nbsp;<i class="ace-icon fa fa-eye bigger-120" style="color:${btnStyle!}"></i> 浏览器信息
+				</a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse in" id="collapseOne" aria-expanded="true">
+			<div class="panel-body">
+				<p>${model.user_agent!}</p>
+				<p class="rr"><#if model.browser??>经检测是 ${model.browser!} 浏览器</#if></p>
+			</div>
+		</div>
+	</div>
+	</#if>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="accordion-toggle<#if model.user_agent?? && model.user_agent!=''> collapsed</#if>" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false">
+					<i class="bigger-110 ace-icon fa<#if model.user_agent?? && model.user_agent!=''> fa-angle-right<#else /> fa-angle-down</#if>" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+					&nbsp;<i class="ace-icon fa fa-globe bigger-120" style="color:${btnStyle!}"></i> IP归属地
+				</a>
+			</h4>
+		</div>
+		<div class="panel-collapse collapse<#if model.user_agent?? && model.user_agent!=''><#else /> in</#if>" id="collapseTwo" aria-expanded="false" <#if model.user_agent?? && model.user_agent!=''>style="height: 0px;"<#else /></#if>>
+			<div class="panel-body">
+				<p>${model.ip!}</p>
+				<p>${model.ipAddress!}</p>
+			</div>
+		</div>
+	</div>
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<h4 class="panel-title">
+				<a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false">
+					<i class="bigger-110 ace-icon fa fa-angle-right" data-icon-hide="ace-icon fa fa-angle-down" data-icon-show="ace-icon fa fa-angle-right"></i>
+					&nbsp;<i class="ace-icon fa fa-file-o bigger-120" style="color:${btnStyle!}"></i> 数据包内容
+				</a>
+			</h4>
+		</div>
+
+		<div class="panel-collapse collapse" id="collapseThree" aria-expanded="false" style="height: 0px;">
+			<div class="panel-body ywhh">
+				<p>
+					<#if model.type?? && model.type==1 && model.stu==1>
+						<#if model.description?starts_with('password')>
+							${model.description?substring(model.description?index_of("&")+1, model.description?length)}&password=
+							<a style="vertical-align:sub;margin-left: 2px;" class="tooltip-error" data-original-title="登录密码为私密信息, 已隐藏"><i class="fa fa-lock fa-2x"></i></a>
+						<#else/>
+							${model.description?substring(0, model.description?index_of("password=")+9)}
+							<a style="vertical-align:sub;margin-left: 2px;" class="tooltip-error" data-original-title="登录密码为私密信息, 已隐藏"><i class="fa fa-lock fa-2x"></i></a>
+						</#if>
+					<#else />
+						${model.description!}
+					</#if>
+				</p>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- <div class="col-sm-6">
+	<div class="tabbable">
+		<ul class="nav nav-tabs" id="myTab">
+			<#if model.user_agent?? && model.user_agent!=''>
+			<li class="active">
+				<a data-toggle="tab" href="#home" aria-expanded="true">
+					<i class="ace-icon fa fa-eye bigger-120" style="color:${btnStyle!}"></i>
+					浏览器信息
+				</a>
+			</li>
+			</#if>
+			<li class="<#if !model.user_agent?? || model.user_agent==''>active</#if>">
+				<a data-toggle="tab" href="#ip" aria-expanded="true">
+					<i class="ace-icon fa fa-globe bigger-120" style="color:${btnStyle!}"></i>
+					IP归属地
+				</a>
+			</li>
+			<li class="">
+				<a data-toggle="tab" href="#messages" aria-expanded="false">
+					<i class="ace-icon fa fa-file-o bigger-120" style="color:${btnStyle!}"></i>
+					数据包内容
+				</a>
+			</li>
+		</ul>
+		<div class="tab-content">
+			<#if model.user_agent?? && model.user_agent!=''>
+			<div id="home" class="tab-pane fade active in">
+				<p>${model.user_agent!}</p>
+				<p><#if model.browser??>经检测是 - ${model.browser!} 浏览器</#if></p>
+			</div>
+			</#if>
+			<div id="ip" class="<#if !model.user_agent?? || model.user_agent==''>tab-pane fade active in<#else />tab-pane fade ywhh</#if>">
+				<p>${model.ipAddress!}</p>
+			</div>            
+			<div id="messages" class="tab-pane fade ywhh">
+				<p>
+					<#if model.type?? && model.type==1>
+						<#if model.description?starts_with('password')>
+							${model.description?substring(model.description?index_of("&")+1, model.description?length)}&password=
+							<a style="vertical-align:sub;margin-left: 2px;" data-original-title="登录密码为私密信息, 已隐藏"><i class="fa fa-lock fa-2x"></i></a>
+						<#else/>
+							${model.description?substring(0, model.description?index_of("password=")+9)}
+							<a style="vertical-align:sub;margin-left: 2px;" data-original-title="登录密码为私密信息, 已隐藏"><i class="fa fa-lock fa-2x"></i></a>
+						</#if>
+					<#else />
+						${model.description!}
+					</#if>
+				</p>
+			</div>
+		</div>
+	</div>
+</div> -->
+</@mainLayout>

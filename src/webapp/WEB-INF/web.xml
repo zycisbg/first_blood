@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+	id="WebApp_ID" version="2.5">
+	<listener>
+		<listener-class>com.fb.commons.SessionListener</listener-class>
+	</listener>
+	<filter>
+		<filter-name>jfinal</filter-name>
+		<filter-class>com.jfinal.core.JFinalFilter</filter-class>
+		<init-param>
+			<param-name>configClass</param-name>
+			<param-value>com.fb.core.Config</param-value>
+		</init-param>
+	</filter>
+	<!-- 图形验证码 -->
+	<servlet>
+		<servlet-name>AuthImage</servlet-name>
+		<servlet-class>com.fb.controller.AuthImage</servlet-class>
+	</servlet>
+
+	<!-- 百度ueditor -->
+	<servlet>
+		<servlet-name>ImageUpload</servlet-name>
+		<servlet-class>com.fb.controller.ueditor.ImageUpload</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ScrawlUp</servlet-name>
+		<servlet-class>com.aicailang.controller.ueditor.ScrawlUp</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>FileUp</servlet-name>
+		<servlet-class>com.fb.controller.ueditor.FileUp</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>GetRemoteImage</servlet-name>
+		<servlet-class>com.fb.controller.ueditor.GetRemoteImage</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ImageManager</servlet-name>
+		<servlet-class>com.fb.controller.ueditor.ImageManager</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>GetMovie</servlet-name>
+		<servlet-class>com.fb.controller.ueditor.GetMovie</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>AuthImage</servlet-name>
+		<url-pattern>/authImage</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ImageUpload</servlet-name>
+		<url-pattern>/ImageUpload</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ScrawlUp</servlet-name>
+		<url-pattern>/ScrawlUp</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FileUp</servlet-name>
+		<url-pattern>/FileUp</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetRemoteImage</servlet-name>
+		<url-pattern>/GetRemoteImage</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ImageManager</servlet-name>
+		<url-pattern>/ImageManager</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetMovie</servlet-name>
+		<url-pattern>/GetMovie</url-pattern>
+	</servlet-mapping>
+	<filter-mapping>
+		<filter-name>jfinal</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<session-config>
+		<session-timeout>300</session-timeout>
+	</session-config>
+</web-app>

@@ -1,0 +1,66 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/user/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>用户列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>对[<span style="color: #FF0000">${model.username!}</span>]进行角色分配</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<#if platformList?? && (platformList?size>0)>
+<#list platformList as item>
+<div class="col-sm-8">
+	<div class="widget-box transparent">
+		<div class="widget-header widget-header-flat">
+			<h4 class="widget-title lighter">
+				<i class="ace-icon fa fa-align-justify" style="color:${tabStyle!}"></i>
+				${item.label!} 平台角色
+			</h4>
+		</div>
+		<div class="widget-body" style="display: block;">
+			<div class="widget-main no-padding">
+				<#list roles as role>
+					<#if item.val+''=role.platform+''>
+					<div class="col-md-3" style="line-height: 40px;">
+						<label class="block tooltip-error"<#if role.status==1+''> data-rel="tooltip" data-placement="left" data-original-title="该角色已被禁用"</#if>>
+							<input name="roleIds" value="${role.id}" type="checkbox" <#if role.status==1+'' > disabled</#if> <#if (roleIds?? && roleIds?split(",")?seq_contains(role.id+'')) > checked</#if> class="ace ace-checkbox-2">
+							<span class="lbl bigger-120"> ${role.name!}</span>
+						</label>
+					</div>
+					</#if>
+				</#list>
+			</div>
+		</div>
+	</div>
+</div>
+</#list>
+<form id="changerolesForm" action="${ctx!}/sys/user/role${suffix!}" method="post">
+	<input type="hidden" id=""id"" name="id" value="${model.id!}" />
+	<input type="hidden" id="roleIds" name="roleIds" value="${roleIds!}" />
+	<div class="wizard-actions">
+		<div class="col-md-offset-2 col-md-10">
+			<button class="btn btn-primary btn-xs col-md-2 btn-round" type="button" onclick="changeRoles();" data-loading-text="<i class='fa fa-spinner fa-spin fa-1x fa-fw margin-bottom'></i>  处理中...">
+				<span class="bigger-110"><i class="ace-icon fa <#if roleIds??>fa-edit<#else />fa-save</#if>"></i> <#if roleIds??>编辑<#else />添加</#if></span>
+			</button>
+		</div>
+	</div>
+</form>
+</#if>
+<script>
+function changeRoles() {
+	$('#submit-btn').button('loading');
+	var roleIds = '';
+	$(":checked:checked").each(function() {
+		roleIds += ',' + $(this).val();
+	});
+	if (roleIds.length > 0) {
+		roleIds = roleIds.substr(1);
+	}else{
+		/* alert("请至少选择一个角色!");
+		return false; */
+	}
+	$('#roleIds').val(roleIds);
+	$('#changerolesForm').submit();
+}
+</script>
+</@mainLayout>

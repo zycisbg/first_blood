@@ -1,0 +1,90 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/ugroup/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>用户组列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i><#if model.id??>编辑<#else />添加</#if>用户组</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<script type="text/javascript">
+function searchUg(val){
+	$.ajax({
+		type : "POST",
+		url : "${ctx!}/sys/ugroup/search${suffix!}?type=1",
+		data : {
+			platform : val
+		},
+		datatype : "json",//"xml", "html", "script", "json", "jsonp", "text".
+		success : function(data) {
+			var obj = document.getElementById('pid');
+			obj.options.length = 0; 
+			obj.options.add(new Option("--请选择--","0")); //这个兼容IE与firefox
+			if(data!=null && data!=''){
+				obj.options.add(new Option(data.name,data.id, true, true)); //这个兼容IE与firefox
+			}
+		}
+	});
+}
+</script>
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/sys/ugroup<#if model.id??>/edit<#else />/add</#if>${suffix!}" method="post">
+<#if model.id??>
+<input type="hidden" name="model.id" value="${model.id}" />
+</#if>
+
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="name"><i class="rr">*</i>用户组名称:</label>
+	<div class="col-md-4">
+		<input type="text" id="name" name="model.name" value="${model.name!}" class="col-md-7" maxlength="50" btvd-type="required" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="description">描述:</label>
+	<div class="col-md-3">
+		<textarea id="form-field-11" class="autosize-transition form-control" id="description" name="model.description" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 100px;">${model.description!}</textarea>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="stu"><i class="rr">*</i>状态:</label>
+	<div class="col-md-4">
+		<div class="radio">
+			<label>
+				<input name="model.stu" type="radio" value="1" class="ace" <#if !model.stu?? || model.stu == 1> checked</#if> />
+				<span class="lbl">正常</span>
+			</label>
+			<label>
+				<input name="model.stu" type="radio" value="0" class="ace" <#if model.stu?? && model.stu == 0> checked</#if> />
+				<span class="lbl">禁用</span>
+			</label>
+		</div>
+	</div>
+</div>
+<!-- 表单项结束 -->
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa <#if model.id??>fa-edit<#else />fa-save</#if>"></i> <#if model.id??> 编 辑 <#else /> 添 加 </#if></span>
+		</button>
+	</div>
+</div>
+</form>
+<script>
+<#if model.id??>
+	<#if model.pid!=0>
+	searchUg('${model.platform}');
+	</#if>
+<#else >
+	//var obj = document.getElementById('platform');
+	//obj.options.length = 0; 
+	var num = '${platform_id!}';
+	<#if is_root?? && is_root=='1'>
+		num = $("#platform option:first").val();
+	</#if>
+	searchUg(num);
+</#if>
+</script>
+<!-- 表单结束 -->
+</@mainLayout>

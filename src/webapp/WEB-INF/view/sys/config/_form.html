@@ -1,0 +1,233 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<script type="text/javascript">var ari_width = 400, ari_heigth = 400;</script>
+<@preview />
+<@umeditor />
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon fa fa-gears bigger-110" style="color:${tabStyle!}"></i>系统基本配置</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<script>
+function question(val){
+	$("#question_review").attr("path","${ctx}/assets/images/question/"+val+".png");
+}
+</script>
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/sys/config/edit${suffix!}" method="post">
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_system_log_switch.name!}:</label>
+		<div class="col-md-3">
+			<div class="radio">
+				<label>
+					<input name="sg_system_log_switch" type="radio" value="yes" class="ace" <#if sg_system_log_switch.value?? && sg_system_log_switch.value=='yes'> checked</#if> />
+					<span class="lbl">开启</span>
+				</label>
+				<label>
+					<input name="sg_system_log_switch" type="radio" value="no" class="ace" <#if sg_system_log_switch.value?? && sg_system_log_switch.value=='no'> checked</#if> />
+					<span class="lbl">关闭</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_system_login_verifycode_switch.name!}:</label>
+		<div class="col-md-3">
+			<div class="radio">
+				<label>
+					<input name="sg_system_login_verifycode_switch" type="radio" value="yes" class="ace" <#if sg_system_login_verifycode_switch.value?? && sg_system_login_verifycode_switch.value=='yes'> checked</#if> />
+					<span class="lbl">开启</span>
+				</label>
+				<label>
+					<input name="sg_system_login_verifycode_switch" type="radio" value="no" class="ace" <#if sg_system_login_verifycode_switch.value?? && sg_system_login_verifycode_switch.value=='no'> checked</#if> />
+					<span class="lbl">关闭</span>
+				</label>
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_system_login_background.name!}:</label>
+		<div class="col-md-3">
+			<select style="margin-left: 10px;" name="sg_system_login_background" onchange="question(this.value)">
+				<option value="dark" <#if sg_system_login_background.value?? && sg_system_login_background.value+''=='dark'> selected</#if>> 黑暗(dark)</option>
+				<option value="blur" <#if sg_system_login_background.value?? && sg_system_login_background.value+''=='blur'> selected</#if>> 滤镜(blur)</option>
+				<option value="light" <#if sg_system_login_background.value?? && sg_system_login_background.value+''=='light'> selected</#if>> 明亮(light)</option>
+			</select>
+			<a path="${ctx}/assets/images/question/${sg_system_login_background.value!}.png" id="question_review" class="preview"><i class="ace-icon fa fa-question-circle bigger-150" style="vertical-align: text-bottom;"></i></a>
+		</div>
+	</div>
+	<#if fixed?? && (fixed?size gt 0)>
+	<#list fixed.keySet() as key> 
+	<div class="form-group">
+		<!-- {breadcrumbs_fixed=yes, navbar_fixed=yes, sidebar_fixed=yes} -->
+		<label class="col-md-2 control-label no-padding-right" for="val"><#if key=='navbar_fixed'>锁定头部<#elseif key=='sidebar_fixed'>锁定左侧栏<#elseif key=='breadcrumbs_fixed'>锁定面包屑<#else>aaaa</#if>:</label>
+		<div class="col-md-6">
+			<div class="radio">
+				<label>
+					<input name="sg_${key}" type="radio" value="yes" class="ace" <#if fixed.get(key)?? && fixed.get(key)=='yes'> checked</#if> />
+					<span class="lbl">开启</span>
+				</label>
+				<label>
+					<input name="sg_${key}" type="radio" value="no" class="ace" <#if fixed.get(key)?? && fixed.get(key)=='no'> checked</#if> />
+					<span class="lbl">关闭</span>
+				</label>
+				<#if key=='breadcrumbs_fixed'><span style="color:#FF0000">锁定面包屑必须同时锁定左侧栏和头部!</span>
+				<script type="text/javascript">
+				$("input:radio[name='sg_${key}'][value='yes']").click(function(){
+					//if($(this).attr("value")=='yes'){
+						//选中面包屑必须也同时选中左侧栏
+						//$("input:radio[name='sidebar_fixed'][value='yes']").attr("checked","checked")
+						$("input:radio[name='sg_sidebar_fixed'][value='yes']").click();
+						$("input:radio[name='sg_navbar_fixed'][value='yes']").click();
+					//}
+				});
+				</script>
+				</#if>
+				<#if key=='sidebar_fixed'><span style="color:#FF0000">锁定左侧栏必须同时锁定头部!</span>
+				<script type="text/javascript">
+				$("input:radio[name='sg_sidebar_fixed']").click(function(){
+					if($(this).attr("value")=='yes'){
+						$("input:radio[name='sg_navbar_fixed'][value='yes']").click();
+					}else{
+						$("input:radio[name='sg_breadcrumbs_fixed'][value='no']").click();
+					}
+				});
+				</script>
+				</#if>
+				<#if key=='navbar_fixed'>
+				<script type="text/javascript">
+				$("input:radio[name='sg_navbar_fixed'][value='no']").click(function(){
+					//if($(this).attr("value")=='yes'){
+						//选中面包屑必须也同时选中左侧栏
+						//$("input:radio[name='sidebar_fixed'][value='yes']").attr("checked","checked")
+						$("input:radio[name='sg_sidebar_fixed'][value='no']").click();
+						$("input:radio[name='sg_breadcrumbs_fixed'][value='no']").click();
+					//}
+				});
+				</script>
+				</#if>
+			</div>
+		</div>
+	</div>
+	</#list>
+	</#if>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_project_name.name!}:</label>
+		<div class="col-md-3">
+			<input type="text" name="sg_project_name" value="${sg_project_name.value!}" style="margin-left: 10px;">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_company_name.name!}:</label>
+		<div class="col-md-4">
+			<input type="text" name="sg_company_name" value="${sg_company_name.value!}" class="input-xlarge" style="margin-left: 10px;">
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_white_list_ips.name!}:</label>
+		<div class="col-md-4">
+			<textarea id="form-field-11" class="autosize-transition form-control" name="sg_white_list_ips" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 50px;margin-left: 10px;">${sg_white_list_ips.value!}</textarea>
+			<span style="color:#FF0000;margin-left: 10px;">白名单IP下进行登录免验证码等等</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_password_error_max_num.name!}:</label>
+		<div class="col-md-8">
+			<input type="text" name="sg_password_error_max_num" value="${sg_password_error_max_num.value!}" style="margin-left: 10px;" btvd-type="number">
+			<span style="color:#FF0000;margin-left: 10px;">登录最多允许用户密码错误次数!</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_password_error_max_time.name!}:</label>
+		<div class="col-md-8">
+			<input type="text" name="sg_password_error_max_time" value="${sg_password_error_max_time.value!}" style="margin-left: 10px;">
+			<span style="color:#FF0000;margin-left: 10px;">密码错误次数超过所设定的值时，锁定时长，不填，则表示次日解锁。单位：小时</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_system_left_top_logo.name!}:</label>
+		<div class="col-md-5">
+			<img id="preview_system_left_top_logo" src="${sg_system_left_top_logo.value!}"<#if !sg_system_left_top_logo.value??>class="hidden"</#if> style="height: 80px;" />
+			<button type="button" id="imgbtn_system_left_top_logo" class="btn btn-white btn-default" onclick="chooseImg('system_left_top_logo');" data-loading-text="上传中..."><i class="fa fa-upload"></i></button>
+			<input type="hidden" id="system_left_top_logo" name="sg_system_left_top_logo" value="${sg_system_left_top_logo.value!}"/>
+			<span style="vertical-align: -webkit-baseline-middle; padding-left:10px; color: #CCC">建议大小:100 X 40</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_system_bottom_logo.name!}:</label>
+		<div class="col-md-5">
+			<img id="preview_system_bottom_logo" src="${sg_system_bottom_logo.value!}"<#if !sg_system_bottom_logo.value??>class="hidden"</#if> style="height: 80px;" />
+			<button type="button" id="imgbtn_system_bottom_logo" class="btn btn-white btn-default" onclick="chooseImg('system_bottom_logo');" data-loading-text="上传中..."><i class="fa fa-upload"></i></button>
+			<input type="hidden" id="system_bottom_logo" name="sg_system_bottom_logo" value="${sg_system_bottom_logo.value!}"/>
+			<span style="vertical-align: -webkit-baseline-middle; padding-left:10px; color: #CCC">建议大小:100 X 40</span>
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="val">${sg_system_copyright.name!}:</label>
+		<div class="col-md-6">
+			<textarea id="content" class="autosize-transition form-control" name="sg_system_copyright" style="margin-left: 10px;">${sg_system_copyright.value!}</textarea>
+		</div>
+	</div>
+	<!-- 表单项结束 -->
+	<hr />
+	<div class="wizard-actions">
+		<div class="col-md-offset-2 col-md-3">
+			<button class="btn btn-primary btn-xs col-md-6" type="submit" data-loading-text="处理中...">
+				<span class="bigger-110"><i class="ace-icon fa fa-edit"></i>修改基本配置</span>
+			</button>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+    var um = UM.getEditor('content', {
+	toolbar : [ 'source', //源代码
+		'anchor', //锚点
+		'undo', //撤销
+		'redo', //重做
+		'forecolor', //字体颜色
+		'backcolor', //背景色
+		'bold', //加粗
+		'italic', //斜体
+		'underline', //下划线
+		'strikethrough', //删除线
+		'link', //超链接
+		'unlink', //取消链接
+		'subscript', //下标
+		'superscript', //上标
+		'removeformat', //清除格式
+		'cleardoc', //清空文档
+		'preview' //预览
+		]
+	});
+    um.setHeight(100);
+    um.setWidth(300);
+</script>
+<div class="hidden">
+<script>
+	function chooseImg(id) {
+		$("#chooseImgId").val(id);
+		$('#chooseImgFile').click();
+	}
+	function uploadImg() {
+		$('#imgbtn_' + $("#chooseImgId").val()).button('loading');
+		$('#uploadImgForm').submit();
+	}
+	function uploadHandler(_json) {
+		var json = eval('(' + _json + ')');
+		if (json.code == 200) {
+			$('#' + json.id).val(json.uri);
+			$('#preview_' + json.id).attr('src', json.uri).removeClass('hidden');
+		}
+		$('#imgbtn_' + json.id).button('reset');
+	}
+	</script>
+	<form id="uploadImgForm" action="${ctx!}/file/fileUpload${suffix}" method="post" target="frameFile" enctype="multipart/form-data">
+		<input id="chooseImgId" type="hidden" name="id" value="" />
+		<input id="chooseImgFile" type="file" name="fp" onchange="uploadImg();" />
+	</form>
+	<iframe id="frameFile" name="frameFile"></iframe>
+</div>
+<!-- 表单结束 -->
+</@mainLayout>

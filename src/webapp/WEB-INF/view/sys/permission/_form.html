@@ -1,0 +1,167 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/permission/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>系统权限列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i><#if model.id??>编辑<#else />添加</#if>系统权限</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+
+<@alertMsg />
+
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/sys/permission<#if model.id??>/edit<#else />/add</#if>${suffix!}" method="post">
+<#if model.id??>
+<input type="hidden" name="model.id" value="${model.id}" />
+</#if>
+<!-- 表单项开始 -->
+<#if (model.id?? && model.level!=3) || !model.id??>
+	<div class="form-group">
+		<label class="col-md-2 control-label no-padding-right" for="pid"><i class="rr">*</i>父节点:</label>
+		<div class="col-md-5">
+			<select id="pid" name="model.pid" onchange="verify(this)">
+				<option value="0">－－请选择－－</option>
+				<#if pList?? && (pList?size>0)>
+					<#list pList as p>
+						<option value="${p.id!}" id="${p.level!}" <#if model.pid?? && model.pid==p.id>selected</#if>>
+						|
+						<#if p.level==2>－</#if>
+						${p.name!}
+						</option>
+					</#list>
+				</#if>
+			</select>
+		</div>
+	</div>
+</#if>
+<script type="text/javascript">
+function verify(th){
+	var level = $(th).find("option:selected").attr("id");
+	if(level==2){
+		$("#function_ids").attr("disabled","disabled");
+		$("#batch_save").hide();
+	}else{
+		$("#function_ids").removeAttr("disabled");
+		$("#batch_save").show();
+	}
+}
+</script>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="name"><i class="rr">*</i>权限名称:</label>
+	<div class="col-md-5">
+		<input class="input-xlarge" type="text" id="name" name="model.name" value="<#if !model.name??>${model.function_name!}<#else />${model.name!}</#if>" btvd-type="required">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="controller_url"><i class="rr">*</i>模块URL:</label>
+	<div class="col-md-5">
+		<input class="input-xlarge" type="text" id="controller_url" name="model.controller_url" value="${model.controller_url!}" btvd-type="required">
+	</div>
+</div>
+<#if (!model.id?? || (model.id?? && model.level!=3))>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="default_function_id"><i class="rr">*</i>默认跳转页(方法):</label>
+	<div class="col-md-5">
+		<select id="default_function_id" name="default_function_id">
+			<#list functions as function>
+			<option value="${function.id!}"<#if model.function_id?? && function.id == model.function_id> selected</#if>>${function.name!} : ${function.method_key!}</option>
+			</#list>
+		</select>
+	</div>
+</div>
+</#if>
+<#if model.id??>
+	<#if model.level==3>
+		<div class="form-group">
+			<label class="col-md-2 control-label no-padding-right" for="function_name"><i class="rr">*</i>功能:</label>
+			<div class="col-md-5">
+				<div class="radio">${model.method_key!} &nbsp;<a class="tooltip-info" data-original-title="${model.function_name!} 方法"><i class="ace-icon fa ${model.function_icon!} bigger-110" style="color:${tabStyle!}"></i></a></div>
+			</div>
+		</div>
+	<#else />
+	</#if>
+<#else />
+<!-- 编辑的时候不显示此项 -->
+<div class="form-group" id="batch_save">
+	<label class="col-md-2 control-label no-padding-right" for="function_ids">包含的功能方法(批量添加):</label>
+	<div class="col-md-5">
+		<select multiple="" id="function_ids" name="function_ids" class="select2" data-placeholder="请分配该模块所有的功能方法">
+			<option value="">--请选择--</option>
+			<#list functions as function>
+			<option value="${function.id!}"<#if model.function_id?? && function.id == model.function_id> selected</#if>>${function.name!} : ${function.method_key!}</option>
+			</#list>
+		</select>
+	</div>
+</div>
+</#if>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="params">附带参数:</label>
+	<div class="col-md-8">
+		<input class="input-xlarge tooltip-error" type="text" id="params" name="model.params" value="${model.params!}" data-rel="tooltip" data-placement="right" data-original-title="自定义使用时，请将填写的参数紧随后缀 “${suffix!}” 后">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="icon">图标:</label>
+	<div class="col-md-4">
+		<input type="text" id="icon" name="model.icon" value="${model.icon!}" maxlength="50" data-rel="tooltip" class="tooltip-success" data-placement="right" data-original-title="奥森图标"/>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="sort"><i class="rr">*</i>排序:</label>
+	<div class="col-md-4">
+		<input type="text" id="sort" name="model.sort" value="${model.sort!}" btvd-type="number" />
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="target"><i class="rr">*</i>页面打开方式:</label>
+	<div class="col-md-4">
+		<select id="target" name="model.target">
+			<option value="_self"<#if model.target?? && model.target == '_self'> selected</#if>>本窗口</option>
+			<option value="_blank"<#if model.target?? && model.target == '_blank'> selected</#if>>新窗口</option>
+		</select>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="is_show"><i class="rr">*</i>导航或菜单中显示:</label>
+	<div class="col-md-4">
+		<div class="radio">
+			<label>
+				<input name="model.is_show" type="radio" value="1" class="ace" <#if !model.is_show?? || model.is_show == 1> checked</#if> />
+				<span class="lbl">显示</span>
+			</label>
+			<label>
+				<input name="model.is_show" type="radio" value="0" class="ace" <#if model.is_show?? && model.is_show == 0> checked</#if> />
+				<span class="lbl">不显示</span>
+			</label>
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="is_default"><i class="rr">*</i>是否必须授权菜单:</label>
+	<div class="col-md-4">
+		<div class="radio">
+			<label>
+				<input name="model.is_default" type="radio" value="0" class="ace" <#if !model.is_default?? || model.is_default==0> checked</#if> />
+				<span class="lbl">不是必须</span>
+			</label>
+			<label>
+				<input name="model.is_default" type="radio" value="1" class="ace" <#if model.is_default?? && model.is_default==1> checked</#if> />
+				<span class="lbl">必须授权</span>
+			</label>
+		</div>
+	</div>
+</div>
+<!-- 表单项结束 -->
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa <#if model.id??>fa-edit<#else />fa-save</#if>"></i> <#if model.id??> 编 辑 <#else /> 添 加 </#if></span>
+		</button>
+	</div>
+</div>
+</form>
+<!-- 表单结束 -->
+
+</@mainLayout>

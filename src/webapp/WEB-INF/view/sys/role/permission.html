@@ -1,0 +1,100 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<link rel="stylesheet" href="${ctx!}/assets/js/zTree/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<script type="text/javascript" src="${ctx!}/assets/js/zTree/js/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="${ctx!}/assets/js/zTree/js/jquery.ztree.excheck.js"></script>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/role/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>系统角色列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>对 [<span style="color: #FF0000">${model.name!}</span>] 进行权限管理</a></li>
+</ul>
+<br />
+<SCRIPT type="text/javascript">
+	var setting = {
+		check: {
+			enable: true
+		},
+		data: {
+			simpleData: {enable: true}
+		},
+		callback: {
+			onCheck: onCheck
+		},
+		view: {
+			nameIsHTML: true
+		}
+	};
+	
+	var clearFlag = false;
+	function onCheck(e, treeId, treeNode) {
+		count();
+		if (clearFlag) {
+			clearCheckedOldNodes();
+		}
+	}
+	function clearCheckedOldNodes() {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+		nodes = zTree.getChangeCheckedNodes();
+		for (var i=0, l=nodes.length; i<l; i++) {
+			nodes[i].checkedOld = nodes[i].checked;
+		}
+	}
+	var zNodes = eval( '(' + '${permissions!}' + ')' );
+	
+	var code;
+	function showCode(str) {
+		if (!code) code = $("#code");
+		code.empty();
+		code.append("<li>"+str+"</li>");
+	}
+	function expandNode(e) {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+		type = e.data.type,
+		nodes = zTree.getSelectedNodes();
+		if (type == "expandAll") {
+			zTree.expandAll(true);
+		} else if (type == "collapseAll") {
+			zTree.expandAll(false);
+		}
+	}
+	
+	function count() {
+		var zTree = $.fn.zTree.getZTreeObj("treeDemo"),
+		checkCount = zTree.getCheckedNodes(true).length,
+		nocheckCount = zTree.getCheckedNodes(false).length,
+		changeCount = zTree.getChangeCheckedNodes().length;
+		var nodes = zTree.getSelectedNodes();
+		
+		var obj = zTree.getCheckedNodes(true);
+		var ids = "";
+		for(var i=0;i<obj.length;i++){
+			ids+=obj[i].id+",";
+		}
+		$("#permissionIds").val(ids);
+	}
+
+	$(document).ready(function(){
+		$.fn.zTree.init($("#treeDemo"), setting, zNodes);
+		count();
+		$("#expandAllBtn").bind("click", {type:"expandAll"}, expandNode);
+		$("#collapseAllBtn").bind("click", {type:"collapseAll"}, expandNode);
+	});
+</SCRIPT>
+<!-- 操作表头结束 -->
+<div class="col-sm-6">
+	<p style="margin-left: 20px;">
+		<a id="expandAllBtn" href="#" onclick="return false;">展开</a>
+		<a id="collapseAllBtn" href="#" onclick="return false;">折叠</a>
+	</p>
+	<ul id="treeDemo" class="ztree"></ul>
+	<br/>
+	<form id="changePermissionsForm" action="${ctx!}/sys/role/permission${suffix!}" method="post">
+		<input type="hidden" name="id" value="${model.id!}" />
+		<input type="hidden" id="permissionIds" name="permissionIds" value="${model.permission_ids!}" />
+		<input type="hidden" id="ids" name="ids" value="${ids!}" />
+		<button class="btn btn-primary btn-xs col-md-2 pull-right" type="submit" id="submit-btn" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa fa-edit"></i> 修改</span>
+		</button>
+	</form>
+</div>
+</@mainLayout>

@@ -1,0 +1,5 @@
+/* previewShowWindow */
+/*.previewShowWindow{position:absolute;border:1px solid #dadade;background:#95959d;padding:5px;display:none;color:#fff;text-align:center;z-index:999;}*/
+
+/* previewShowWindow */
+.previewShowWindow{position:absolute;display:none;color:#fff; border:1px solid #0099CC;text-align:center;z-index:9999;}

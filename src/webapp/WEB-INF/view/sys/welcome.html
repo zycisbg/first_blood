@@ -1,0 +1,114 @@
+<#include "../macro/global.ftl" />
+<@mainLayout>
+<!-- <div class="col-xs-12 ">
+	<div class="center">
+		<span class="btn btn-app btn-sm btn-light no-hover">
+			<span class="line-height-1 bigger-20 blue">10000000000</span>
+			<br>
+			<span class="line-height-1 smaller-50"> 用户总数 </span>
+		</span>
+		<span class="btn btn-app btn-sm btn-yellow no-hover">
+			<span class="line-height-1 bigger-20"> 32 </span>
+			<br>
+			<span class="line-height-1 smaller-50"> 投资总额 </span>
+		</span>
+		<span class="btn btn-app btn-sm btn-pink no-hover">
+			<span class="line-height-1 bigger-170"> 4 </span>
+			<br>
+			<span class="line-height-1 smaller-90"> Projects </span>
+		</span>
+		<span class="btn btn-app btn-sm btn-grey no-hover">
+			<span class="line-height-1 bigger-170"> 23 </span>
+			<br>
+			<span class="line-height-1 smaller-90"> Reviews </span>
+		</span>
+		<span class="btn btn-app btn-sm btn-success no-hover">
+			<span class="line-height-1 bigger-170"> 7 </span>
+			<br>
+			<span class="line-height-1 smaller-90"> Albums </span>
+		</span>
+		<span class="btn btn-app btn-sm btn-primary no-hover">
+			<span class="line-height-1 bigger-170"> 55 </span>
+			<br>
+			<span class="line-height-1 smaller-90"> Contacts </span>
+		</span>
+	</div>
+	<div class="space-12"></div>
+</div> -->
+<div class="col-xs-12 col-sm-6">
+	<h3 class="header smaller lighter red"><i class="ace-icon fa fa-desktop bigger-50"></i>系统信息</h3>
+	<!-- #section:pages/profile.info -->
+	<div class="profile-user-info profile-user-info-striped">
+		<div class="profile-info-row">
+			<div class="profile-info-name">JAVA版本</div>
+			<div class="profile-info-value"><span>${java_version!}</span></div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">操作系统</div>
+			<div class="profile-info-value"><span>${os!}</span></div>
+		</div>
+		<div class="profile-info-row">
+			<div class="profile-info-name">监听端口</div>
+			<div class="profile-info-value"><span>${port!}</span></div>
+		</div>
+	</div>
+</div>
+<div class="col-xs-12 col-sm-6">
+	<h3 class="header smaller lighter green"><i class="ace-icon fa fa-user"></i>在线管理员列表</h3>
+	<div class="widget-body">
+		<div class="widget-main no-padding">
+			<table class="table table-bordered table-striped">
+				<thead class="thin-border-bottom">
+					<tr>
+						<th><i class="ace-icon fa fa-caret-right blue"></i>用户名</th>
+						<th><i class="ace-icon fa fa-caret-right blue"></i>登录IP</th>
+						<th><i class="ace-icon fa fa-caret-right blue"></i>在线时长</th>
+						<th class="hidden-480"><i class="ace-icon fa fa-caret-right blue"></i>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					<#if (online?size>0)>
+						<#list online as item> 
+							<tr>
+								<td><b class="green">${item.user.username!}</b></td>
+								<td>${item.loginIp!}</td>
+								<td><i class="ace-icon fa fa-clock-o middle bigger-120 orange"></i> ${item.totalTime!}</td>
+								<td>
+									<#if page_user.username!=item.user.username>
+										<button class="btn btn-white btn-minier btn-round" onclick="offline('${item.user.username!}');"><i class="ace-icon fa fa-times red2"></i> 踢出 </button>
+									</#if>
+								</td>
+							</tr>
+						</#list>
+					<#else />
+						<tr style="background-color: #FFF">
+							<td colspan="5" align="center">
+								<ul class="list-unstyled spaced2">
+									<li class="text-warning bigger-110 orange">
+										<i class="ace-icon fa fa-exclamation-triangle"></i>没有管理员在线
+									</li>
+								</ul>
+							</td>
+						</tr>
+					</#if>
+				</tbody>
+			</table>
+		</div><!-- /.widget-main -->
+	</div>
+</div>
+<script type="text/javascript">
+function offline(userName){
+	$.ajax({
+		  url: "${ctx!}/sys/welcome${suffix!}?type=1&userName="+userName,
+		  async: true,
+		  dataType:"json",
+		  success: function(json){
+			 if(json==200){
+				 alert("踢出已成功!");
+				 location.reload();
+			 }
+		  },
+	 });
+}
+</script>
+</@mainLayout>

@@ -1,0 +1,52 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<script type="text/javascript">var ari_width = 400, ari_heigth = 400;</script>
+<@preview />
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon fa fa-gear bigger-110" style="color:${tabStyle!}"></i>修改个人设置</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<script>
+function question(val){
+	$("#question_review").attr("path","${ctx}/assets/images/question/"+val+".png");
+}
+</script>
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/profile/config/edit${suffix!}" method="post">
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="val">顶部导航颜色:</label>
+	<div class="col-md-5">
+		<input id="colorpicker1" type="text" name="navBgColor" value="${navBgColor}" class="input-small" style="margin-left: 10px;">
+		<a path="${ctx}/assets/images/question/top_nav_color.png" class="preview"><i class="ace-icon fa fa-question-circle bigger-150" style="vertical-align: text-bottom;"></i></a>
+		<span style="color: #CCC">默认值为：#438eb9</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="val">icon图标颜色:</label>
+	<div class="col-md-5">
+		<input id="colorpicker2" type="text" name="tabStyle" value="${tabStyle}" class="input-small" style="margin-left: 10px;">
+		<a path="${ctx}/assets/images/question/icon_color.png" class="preview"><i class="ace-icon fa fa-question-circle bigger-150" style="vertical-align: text-bottom;"></i></a>
+		<span style="color: #CCC">默认值为：#438eb9</span>
+	</div>
+</div>
+<script type="text/javascript">
+jQuery(function($) {
+	$('#colorpicker1').colorpicker();
+	$('#colorpicker2').colorpicker();
+});
+</script>
+<!-- 表单项结束 -->
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-3">
+		<button class="btn btn-primary btn-xs col-md-8" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa fa-edit"></i>保存修改个人设置</span>
+		</button>
+	</div>
+</div>
+</form>
+<!-- 表单结束 -->
+</@mainLayout>

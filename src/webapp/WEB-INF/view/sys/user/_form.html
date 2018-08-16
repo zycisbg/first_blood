@@ -1,0 +1,123 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/user/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>用户列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i><#if model.id??>编辑<#else />添加</#if>用户</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+
+<@alertMsg />
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" id="validation-form" role="form" action="${ctx!}/sys/user<#if model.id??>/edit<#else />/add</#if>${suffix!}" method="post">
+
+<#if model.id??>
+<input type="hidden" name="model.id" value="${model.id!}" />
+</#if>
+
+<!-- 表单项开始 -->
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="email">选择头像:</label>
+	<div class="col-md-4">
+		<style>.col-md-4 img{width:48px;height:48px; cursor:pointer;}.col-md-4 .hover{ border:2px solid #FF0000}</style>
+		<input type="hidden" name="model.avatar" id="avatar" value="${ctx!}/assets/avatars/default_1.png"/>
+		<img id="d_1" onclick="selectIma(1);" class="hover" src="${ctx!}/assets/avatars/default_1.png"/>
+		<img id="d_2" onclick="selectIma(2);" src="${ctx!}/assets/avatars/default_2.png"/>
+		<img id="d_3" onclick="selectIma(3);" src="${ctx!}/assets/avatars/default_3.png"/>
+		<img id="d_4" onclick="selectIma(4);" src="${ctx!}/assets/avatars/default_4.png"/>
+		<img id="d_5" onclick="selectIma(5);" src="${ctx!}/assets/avatars/default_5.png"/>
+	</div>
+	<script type="text/javascript">
+	function  selectIma(id){
+		for(var i=1;i<=5;i++){
+			if(id==i){
+				$("#d_"+i).addClass("hover");
+			}else{
+				$("#d_"+i).removeClass("hover");
+			}
+		}
+		var src = $("#d_"+id).attr("src");
+		$("#avatar").val(src);
+	}
+	var avatardb = '${model.avatar!}';
+	if(avatardb!=null && avatardb!=''){
+		var arr1 = avatardb.split('_');
+		var arr2 = arr1[1].split(".");
+		selectIma(arr2[0]);
+	}else{
+		selectIma(1);
+	}
+	</script>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="username"><i class="rr">*</i>用户名:</label>
+	<div class="col-md-6">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="form-field-icon-1" name="model.username" value="${model.username!}" maxlength="15" btvd-type="required">
+			<i class="ace-icon fa fa-user blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="password"><#if !model.id??><i class="rr">*</i></#if>登录密码:</label>
+	<div class="col-md-8">
+		<span class="input-icon">
+			<input class="input-xlarge tooltip-warning" type="text" id="form-field-icon-1" name="model.password" <#if !model.id??>btvd-type="required"<#else />data-rel="tooltip" data-placement="top" data-original-title="不填则不会修改密码"</#if> maxlength="32">
+			<i class="ace-icon fa fa-lock blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="realname"><i class="rr">*</i>真实姓名:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="form-field-icon-1" name="model.realname" value="${model.realname!}" maxlength="50" btvd-type="required">
+			<i class="ace-icon fa fa-user blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="email">E-Mail:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="form-field-icon-1" name="model.email" value="${model.email!}" maxlength="60">
+			<i class="ace-icon fa fa-at blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="tel">电话:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="form-field-icon-1" name="model.tel" value="${model.tel!}" maxlength="50">
+			<i class="ace-icon fa fa-mobile-phone blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right"><i class="rr">*</i>状态:</label>
+	<div class="col-md-4">
+		<div class="radio">
+			<label>
+				<input name="model.status" type="radio" value="0" class="ace" <#if !model.status?? || model.status == '0'> checked</#if> />
+				<span class="lbl">正常</span>
+			</label>
+			<label>
+				<input name="model.status" type="radio" value="1" class="ace" <#if model.status?? && model.status == '1'> checked</#if> />
+				<span class="lbl">禁用</span>
+			</label>
+		</div>
+	</div>
+</div>
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa <#if model.id??>fa-edit<#else />fa-save</#if>"></i> <#if model.id??> 编 辑 <#else /> 添 加 </#if></span>
+		</button>
+	</div>
+</div>
+</form>
+<!-- 表单项结束 -->
+</@mainLayout>

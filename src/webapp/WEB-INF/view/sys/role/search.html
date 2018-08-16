@@ -1,0 +1,77 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>系统角色列表</a></li>
+	<li><a href="${ctx!}/sys/role/add${suffix!}"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>添加系统角色</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<!-- 搜索表单开始 -->
+<form id="search-form" class="form-horizontal" action="${ctx!}/sys/role/search${suffix!}" method="post">
+	<div class="well" style="float: left; margin: 0px 0px 10px 0px; width: 100%">
+		<input type="hidden" name="pageSort.orderBy" id="orderBy" value="${pageSort.orderBy!}"/>
+		<input type="hidden" name="pageSort.order" id="order" value="${pageSort.order!}"/>
+		<div class="input-group col-md-2" style="float: left;">
+			<span class="input-group-addon">
+				<i class="ace-icon fa fa-search"></i>
+			</span>
+			<input type="text" name="keyword" value="${keyword!}" class="input-xlarge" placeholder="角色名、描述" />
+		</div>
+		<div style="float: left; margin-left: 20px;">
+			<button class="btn btn-white btn-default btn-round" onclick="searchTo();">
+				<i class="ace-icon fa fa-search green"></i> 查 询 
+			</button>
+		</div>
+	</div>
+</form>
+<#if (page.list?size > 0)>
+<!-- 搜索表单开始 -->
+<!-- 数据显示区开始 -->
+<table id="simple-table" class="table table-striped table-bordered table-hover dataTable" style="margin-bottom: 20px;">
+	<thead>
+		<tr>
+			<th><i class="ace-icon fa fa-list-ol bigger-110 hidden-480"></i></th>
+			<th>角色名称</th>
+			<th>描述</th>
+			<th class="sorting_<#if pageSort.orderBy?? && pageSort.orderBy=='add_time'>${pageSort.order!}</#if>" id="sorting" attr="add_time">添加时间</th>
+			<th>状态</th>
+			<th >操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		<#list page.list as item>
+		<tr>
+			<td>${item_index+1}</td>
+			<td>${item.name!}</td>
+			<td>${item.remark!}</td>
+			<td>${item.add_time!}</td>
+			<td>
+				<#if item.status == '0'>
+					<span class="badge badge-success">正常</span>
+				<#else />
+					<span class="badge badge-grey">禁用</span>
+				</#if>
+			</td>
+			<td>
+				<span class="action-buttons">
+					<a class="tooltip-info" href="${ctx!}/sys/role/permission${suffix!}?id=${item.id}" data-original-title="权限勾选"><i class="fa fa-key" style="color:${btnStyle!}"></i> 权限管理</a>
+					&nbsp;
+					<!-- <a href="${ctx!}/sys/role/menu${suffix!}?id=${item.id}" data-original-title="菜单勾选"><i class="fa fa-navicon" style="color:${btnStyle!}"></i> 菜单管理</a>
+					&nbsp; -->
+					<a class="blue tooltip-info" href="${ctx!}/sys/role/edit${suffix!}?id=${item.id}" data-original-title="编辑"><i class="ace-icon fa fa-pencil bigger-130" style="color:${btnStyle!}"></i></a>
+					&nbsp;
+					<a class="blue tooltip-info" id="id-btn-dialog2" attr="${ctx!}/sys/role/remove${suffix!}?id=${item.id}" href="javascript:;" data-original-title="删除"><i class="ace-icon fa fa-trash-o bigger-130" style="color:${btnStyle!}"></i></a>
+				</span>
+			</td>
+		</tr>
+		</#list>
+	</tbody>
+</table>
+<@pager pageUrl="${ctx!}/sys/role/search${suffix!}" formId="search-form" />
+<#else />
+<div class="well well-sm text-center" style="margin-top: 85px;">暂时没有数据.</div>
+<!-- 数据显示区开始结束 -->
+</#if>
+</@mainLayout>

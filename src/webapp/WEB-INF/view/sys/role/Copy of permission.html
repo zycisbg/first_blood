@@ -1,0 +1,171 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/sys/role/search${suffix!}"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>系统角色列表</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>对 [<span style="color: #FF0000">${model.name!}</span>] 进行权限管理</a></li>
+</ul>
+<br />
+<script>
+var isgo = 0;
+function btncolor(idName){
+	$("#nav_span_"+idName).removeClass("hui");
+}
+function selectTo(idName){
+	if(isgo==0){
+		if($("#nav_span_"+idName).hasClass("hui")){
+			$("#nav_span_"+idName).removeClass("hui");
+			$("input[id="+idName+"]").each(function(){
+				if($(this).is(":checked")==true){
+					$(this).click();
+				}
+			});
+		}else{
+			$("input[id="+idName+"]").each(function(){
+				$(this).click();
+			});
+		}
+	}
+}
+$(function(){
+	var flag;
+	$("#all").click(function(){
+		isgo = 1;
+		var type = $("#all_btn").attr("attr");
+		if(type=='yes'){
+			flag = false;
+			$("#all_btn").attr("attr","no").html(" 全部取消");
+		}else{
+			flag = true;
+			$("#all_btn").attr("attr","yes").html(" 全部选中");
+		}
+		$("input[name=permissionId]").each(function(){
+			if($(this).is(":checked")==flag){
+				$(this).click();
+			}
+		});
+		$("input[name=navradio]").each(function(){
+			if(!flag){
+				btncolor($(this).attr("attr"));
+			}
+			if($(this).is(":checked")==flag){
+				$(this).click();
+			}
+		});
+		isgo = 0;
+	})
+})
+</script>
+<!-- 操作表头结束 -->
+<style>.col-md-4{padding-left: 10px;padding-right: 5px;}</style>
+<div class="well well-sm" style="border-radius:3px;">
+	<h4 class="lighter no-margin-bottom">
+		<label>
+			<a data-original-title="全选，具备所有全选" class="tooltip-info" data-placement="top">
+				<i class="ace-icon fa fa-asterisk icon-animated-hand-pointer blue"></i>
+			</a>
+			<span>
+				<input name="all" class="ace ace-checkbox-2" type="checkbox" id="all">
+				<span class="lbl" id="all_btn" attr="yes"> 全部选中</span>
+			</span>
+		</label>
+		<#list page_menus as menu>
+			<#if menu.is_show=='0'>
+			<label style="margin-left: 15px;">
+				<a data-original-title="${menu.menu_name!}" class="tooltip-info" data-placement="top">
+					<#if menu.icon??><i class="ace-icon fa ${menu.icon}"></i></#if>
+				</a>
+				<span>
+					<#assign ck = menu.controller_key?substring(1,menu.controller_key?length)>
+					<input id="nav_${ck}" attr="${ck}" name="navradio" attr="yes" class="ace ace-checkbox-2" type="checkbox" onchange="selectTo('${ck}')">
+					<span class="lbl" id="nav_span_${ck}"> ${menu.menu_name!}</span>
+				</span>
+			</label>
+			</#if>
+		</#list>
+	</h4>
+</div>
+<div class="row">
+	<#list permissions as permission>
+	<div class="col-md-4">
+		<label>
+			<#assign content = permission.controller_key?substring(1, permission.controller_key?length)>
+			<#if content?index_of("/")!=-1>
+				<#assign idName = content?substring(0, content?index_of("/"))>
+			<#else />
+				<#assign idName = content?substring(0, content?length)>
+			</#if>
+			<input id="${idName}" attr="checked_${idName!}_${permission.id!}"  type="checkbox" name="permissionId" value="${permission.id}" class="ace" <#if (model.permission_ids?? && model.permission_ids?index_of(',' + permission.id + ',') > -1)> checked</#if> />
+			<span class="lbl" style="font-size: 12px;">
+				<#list page_menus as menu>
+					<#assign icon = menu.controller_key?substring(1,menu.controller_key?length)>
+					<#if icon==idName>
+						<i class="ace-icon fa ${menu.icon}" style="color:${tabStyle}"></i>
+					</#if>
+				</#list>
+				${permission.function_name!}${permission.module_name!}[${permission.controller_key!}${permission.method_key!}]
+			</span>
+			<script>
+			if('${idName!}'=='logout' || '${idName!}'=='profile'){
+				if($("input[attr=checked_${idName!}_${permission.id!}]").is(":checked")==false){
+					$("input[attr=checked_${idName!}_${permission.id!}]").click();
+				}
+				$("input[attr=checked_${idName!}_${permission.id!}]").attr("disabled",true);
+			}
+			</script>
+		</label>
+	</div>
+	</#list>
+</div>
+<hr />
+<form id="changePermissionsForm" action="${ctx!}/sys/role/permission${suffix!}" method="post">
+<input type="hidden" name="id" value="${model.id!}" />
+<input type="hidden" id="permissionIds" name="permissionIds" value="${model.permission_ids!}" />
+<button class="btn btn-primary btn-xs col-md-2 pull-right" type="button" id="submit-btn" onclick="changePermissions();" data-loading-text="处理中...">
+	<span class="bigger-110"><i class="ace-icon fa fa-edit"></i> 修改</span>
+</button>
+</form>
+<script>
+function changePermissions() {
+	$('#submit-btn').button('loading');
+	var permissionIds = '';
+	$("input[name=permissionId]").each(function() {
+		if($(this).is(":checked")==true){
+			permissionIds += ',' + $(this).val();
+		}
+	});
+	if (permissionIds.length > 0) {
+		permissionIds = permissionIds.substr(1);
+	}
+	$('#permissionIds').val(permissionIds);
+	$('#changePermissionsForm').submit();
+}
+$(function(){
+	<#list page_menus as menu>
+		<#assign ck = menu.controller_key?substring(1,menu.controller_key?length)>
+		var noselect = 0, yesselect = 0;
+		$("input[id=${ck}]").each(function(){
+			if($(this).is(":checked")==true){
+				yesselect = 1;//有选中
+			}
+			if($(this).is(":checked")==false){
+				noselect = 1;//没选中
+			}
+		})
+		if(noselect==0 && yesselect==1){
+			//全选
+			isgo = 1;
+			$("#nav_${ck}").click();
+			isgo = 0;
+		}
+		if(noselect==1 && yesselect==1){
+			//部分选中
+			isgo = 1;
+			$("#nav_${ck}").click();
+			$("#nav_span_${ck}").addClass("hui");
+			isgo = 0;
+		}
+	</#list>
+});
+</script>
+</@mainLayout>

@@ -1,0 +1,38 @@
+label.error {
+	color: red;
+	background: transparent url(images/unchecked.gif) no-repeat scroll 0 0;
+	/**author：sun 自定义提示样式 **/
+	margin-left: 5px;
+    position: relative;
+    /* top: 6px; */
+	height: 16px;
+    line-height: 14px;
+    padding-left: 15px;
+    font-size: 13px;
+}
+
+label.checked {
+	/* background: transparent url(images/checked.gif) no-repeat scroll 0 0; */
+	color: red;
+	background: transparent url(images/checked.gif) no-repeat scroll 0 0;
+	/**author：sun 自定义提示样式 **/
+	margin-left: 5px;
+    position: relative;
+    /* top: 6px; */
+	height: 16px;
+    line-height: 14px;
+    padding-left: 15px;
+    font-size: 13px;
+}
+label#textarea{
+	margin-left: 0px;
+}
+/* label#tooltip{
+	top: 0px;
+}
+label#radio{
+	top: 0px;
+}
+label#select{
+	top: 0px;
+} */

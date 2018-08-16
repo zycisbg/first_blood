@@ -1,0 +1,165 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<script type="text/javascript">var ari_width = 400, ari_heigth = 400;</script>
+<@preview />
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>用户列表</a></li>
+	<li><a href="${ctx!}/sys/user/add${suffix!}"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>添加用户</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+<@alertMsg />
+<!-- 搜索表单开始 -->
+<form id="search-form" class="form-horizontal" action="${ctx!}/sys/user/search${suffix!}" method="post">
+	<div class="well" style="float: left; margin: 0px 0px 10px 0px; width: 100%">
+		<input type="hidden" name="pageSort.orderBy" id="orderBy" value="${pageSort.orderBy!}"/>
+		<input type="hidden" name="pageSort.order" id="order" value="${pageSort.order!}"/>
+		<div class="input-group col-md-2" style="float: left;">
+			<span class="input-group-addon">
+				<i class="ace-icon fa fa-search"></i>
+			</span>
+			<input type="text" name="keyword" value="${keyword!}" class="input-xlarge" placeholder="用户名、真实姓名、E-Mail、电话" />
+		</div>
+		<div style="float: left;margin-left: 20px; margin-top: 2px;">
+			角色名称：
+			<select id="roleId" name="roleId">
+				<option value="">全部</option>
+				<#if (roleList?size>0)>
+					<#list roleList as item>
+						<option value="${item.id!}"<#if roleId?? && roleId+''==item.id+''> selected</#if>>${item.name!}</option>
+					</#list>
+				</#if>
+			</select>
+		</div>
+		<div style="float: left; margin-left:15px; margin-top: 2px;">
+			状态：
+			<select id="status" name="status">
+				<option value="">--全部--</option>
+				<option value="0" <#if status?? && status=='0'>selected</#if>>正常</option>
+				<option value="1" <#if status?? && status=='1'>selected</#if>>禁用</option>
+			</select>
+		</div>
+		<div style="float: left; margin-left: 20px;">
+			<button class="btn btn-white btn-default btn-round" onclick="searchTo();">
+				<i class="ace-icon fa fa-search green"></i> 查 询 
+			</button>
+		</div>
+	</div>
+</form>
+<script>var arr = [];</script>
+<!-- 搜索表单开始 -->
+<!-- 数据显示区开始 -->
+<#if (page.list?size > 0)>
+<table id="simple-table" class="table table-striped table-bordered table-hover dataTable" style="margin-bottom: 20px;">
+	<thead>
+		<tr>
+			<th width="4%"><i class="ace-icon fa fa-list-ol bigger-110 hidden-480"></i></th>
+			<th width="3%">头像</th>
+			<th>角色权限&nbsp;&nbsp;<a data-original-title="角色权限相加"><i class="ace-icon fa fa-plus grey"></i></a>&nbsp;&nbsp;<a class="tooltip-info" data-original-title="所属用户组角色权限"><i class="ace-icon fa fa-group" style="color:${tabStyle!}"></i></a></th>
+			<th>登录账户</th>
+			<th>姓名</th>
+			<!-- <th>E-Mail</th> -->
+			<th>联系电话</th>
+			<th>最后登录ip</th>
+			<th class="sorting_<#if pageSort.orderBy?? && pageSort.orderBy=='last_login_time'>${pageSort.order!}</#if>" id="sorting" attr="last_login_time">最后登录时间</th>
+			<th>状态</th>
+			<th>操作</th>
+		</tr>
+	</thead>
+	<tbody>
+		<#list page.list as item>
+		<tr id="tr_${item.id!}">
+			<td>${item_index+1}</td>
+			<td><#if item.avatar?? && item.avatar!=''><a path="${item.avatar}" class="preview"><img src="${item.avatar!}" width="30px" height="30px" border="0"/></a><#else /></#if></td>
+			<td>${item.role_name!}</td>
+			<td>${item.username!}
+				<#if item.bind_user?? && item.bind_user!=''>
+					<span class="label label-warning label-white middle">
+						<a class="tooltip-info" data-original-title="已绑定惠农聚宝管理员帐号"><i class="ace-icon fa fa-user bigger-120 orange"></i></a>
+						${item.bind_user!}
+					</span>
+				</#if>
+			</td>
+			<td>${item.realname!}</td>
+			<!-- <td>${item.email!}</td> -->
+			<td>${item.tel!}</td>
+			<td>${item.last_login_ip!}</td>
+			<td>${item.last_login_time!}</td>
+			<td>
+			<p style="float: left">
+			<#if item.status == '0'>
+				<span class="badge badge-success">正常</span>
+			<#else />
+				<span class="badge badge-grey">禁用</span>
+			</#if>
+			</p>
+			<#if item.is_lock == 1>
+				<p style="float: right;" id="pwd_error_lock_${item.id}">
+					<span class="action-buttons"><a href="javascript:;" class="tooltip-error" onclick="unlock(${item.id});" data-original-title="密码错误次数超限，已锁定${password_error_max_time!}小时！点击解锁"><i class="pull-right bigger-130 ace-icon fa fa-exclamation-triangle red"></i></a></span>
+				</p>
+			</#if>
+			</td>
+			<td>
+				<span class="action-buttons">
+					<a class="tooltip-info" href="${ctx!}/sys/user/role${suffix!}?id=${item.id}" data-original-title="角色分配"><i class="ace-icon fa fa-mortar-board bigger-130" style="color:${btnStyle!}"></i></a>
+					&nbsp;
+					<a class="blue tooltip-info" href="${ctx!}/sys/user/edit${suffix!}?id=${item.id}" data-original-title="编辑"><i class="ace-icon fa fa-pencil bigger-130" style="color:${btnStyle!}"></i></a>
+					&nbsp;
+					<a class="blue tooltip-info" id="id-btn-dialog2" attr="${ctx!}/sys/user/remove${suffix!}?id=${item.id}" href="javascript:;" data-original-title="删除"><i class="ace-icon fa fa-trash-o bigger-130" style="color:${btnStyle!}"></i>
+				</a>
+			</td>
+		</tr>
+		<#if !item.role_ids??>
+		<script>arr.push(${item.id!});</script>
+		</#if>
+		</#list>
+	</tbody>
+</table>
+<script type="text/javascript">
+function normal(id,times){
+    var obj=$("#"+id);
+    obj.css("background-color","#FFF");
+    if(times<0){
+        return;
+    }
+    times=times-1;
+    setTimeout("error('"+id+"',"+times+")",150);
+}
+function error(id,times){
+    var obj=$("#"+id);
+    obj.css("background-color","#F6CECE");
+    times=times-1;
+    setTimeout("normal('"+id+"',"+times+")",150);
+}
+if(arr!=null && arr.length>0){
+	for(var i=0;i<arr.length;i++){
+		normal('tr_'+arr[i], 6);
+	}
+}
+//ajax 异步请求后台统计数据
+function unlock(id){
+	if(confirm("确定要提前解锁该管理员吗？")){
+		$.ajax({
+			type : "POST",
+			url : "${ctx!}/sys/user/edit${suffix!}",
+			data : {
+				id : id, key:"unlock"
+			},
+			datatype : "json",//"xml", "html", "script", "json", "jsonp", "text".
+			success : function(data) {
+				if(data==1){
+					//隐藏图标
+					$("#pwd_error_lock_"+id).remove();
+				}
+			}
+		});
+	}
+}
+</script>
+<@pager pageUrl="${ctx!}/sys/user/search${suffix!}" formId="search-form" />
+<#else />
+<div class="well well-sm text-center" style="margin-top: 85px;">暂时没有数据.</div>
+<!-- 数据显示区开始结束 -->
+</#if>
+</@mainLayout>

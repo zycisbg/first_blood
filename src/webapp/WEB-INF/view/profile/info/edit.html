@@ -1,0 +1,147 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<@fancybox />
+<ul class="nav nav-tabs">
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>修改个人信息</a></li>
+</ul>
+<br />
+<@validate/>
+<@alertMsg />
+<script>
+	function CheckStr(str){
+		var regx=/[!$^&*+=|{}';'\",<>/?~！#￥%……&*——|{}【】‘；：”“'。，、？]/;
+		rs=regx.exec(str);
+		if(rs!=null)
+		{
+			return false;
+		}
+		else
+		{
+			return true ;
+		}
+	}
+	jQuery.validator.addMethod("isAllowed", function(value, element) {
+		return this.optional(element) || CheckStr(value);
+	}, "请正确输入合法数据");
+</script>
+<form class="form-horizontal bt-validate" role="form" action="${ctx!}/profile/info/edit${suffix!}" method="post">
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right">选择头像:</label>
+	<div class="col-md-10">
+		<style>.col-md-10 img{width:48px;height:48px; cursor:pointer;}.col-md-10 .hover{ border:2px solid #FF0000}</style>
+		<input type="hidden" name="avatar" id="avatar" value="${ctx!}/assets/avatars/default_1.png"/>
+		<img id="d_1" onclick="selectIma(1);" src="${ctx!}/assets/avatars/default_1.png"/>
+		<img id="d_2" onclick="selectIma(2);" src="${ctx!}/assets/avatars/default_2.png"/>
+		<img id="d_3" onclick="selectIma(3);" src="${ctx!}/assets/avatars/default_3.png"/>
+		<img id="d_4" onclick="selectIma(4);" src="${ctx!}/assets/avatars/default_4.png"/>
+		<img id="d_5" onclick="selectIma(5);" src="${ctx!}/assets/avatars/default_5.png"/>
+		<img id="preview_avatar" onclick="selectEx(this);" src="" class="hidden" style="height: 48px; width: 48px" />
+
+	</div>
+	<script type="text/javascript">
+	function iterator(id){
+		for(var i=1;i<=5;i++){
+			if(id==i){
+				$("#d_"+i).addClass("hover");
+			}else{
+				$("#d_"+i).removeClass("hover");
+			}
+		}
+	}
+	function selectEx(th){
+		iterator(6);
+		$(th).addClass("hover");
+		$("#avatar").val($(th).attr("src"));
+	}
+	function  selectIma(id){
+		$("#preview_avatar").removeClass("hover");
+		iterator(id);
+		var src = $("#d_"+id).attr("src");
+		$("#avatar").val(src);
+	}
+	var avatardb = '${user.avatar!}';
+	if(avatardb!=null){
+		if(avatardb.indexOf('default_')!=-1){
+			var arr1 = avatardb.split('_');
+			var arr2 = arr1[1].split(".");
+			selectIma(arr2[0]);
+		}else{
+			//avatardb = avatardb+"@48h_48w_1e";
+			$("#avatar").val(avatardb);
+			$("#preview_avatar").removeClass("hidden").addClass("hover").attr("src", avatardb);
+		}
+	}else{
+		selectIma(1);
+	}
+	</script>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right">用户名:</label>
+	<div class="col-md-10" style="margin-top:9px">
+		<span class="text-success bigger-110 orange">${user.username!}</span>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="realname">真实姓名:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge {isAllowed:true,messages:{isAllowed:'请输入合法数据'}}" type="text" id="realname" name="realname" value="${user.realname!}" btvd-type="required">
+			<i class="ace-icon fa fa-user blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="email">E-Mail:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="email" name="email" value="${user.email!}" btvd-type="email">
+			<i class="ace-icon fa fa-at blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="tel">电话:</label>
+	<div class="col-md-10">
+		<span class="input-icon">
+			<input class="input-xlarge" type="text" id="tel" name="tel" value="${user.tel!}" btvd-type="number">
+			<i class="ace-icon fa fa-mobile-phone blue"></i>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right">最后登录IP:</label>
+	<div class="col-md-10" style="margin-top: 9px;">${user.last_login_ip!}</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right">最后登录时间:</label>
+	<div class="col-md-10" style="margin-top: 9px;">${user.last_login_time!}</div>
+</div>
+<hr />
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中...">
+			<span class="bigger-110"><i class="ace-icon fa fa-edit"></i> 编 辑 </span>
+		</button>
+	</div>
+</div>
+</form>
+<!-- 搜索表单开始 -->
+<script type="text/javascript">
+$(document).ready(function() {
+	$(".fancybox").fancybox({
+		'width':'60%',
+		'height':'60%',
+		'autoScale':false,
+		'onClosed': function() {
+			var type = $("#select_type").val();
+			$("#radio_type_"+type).attr('checked', 'checked');
+		}
+	});
+});
+function callBack(idName, url){
+	iterator(6);
+	$("#preview_"+idName).addClass("hover");
+}
+</script>
+</@mainLayout>
