@@ -93,7 +93,7 @@
         });
     });
 </script>
-<form id="search-form" class="form-horizontal" action="${ctx!}/platform/product/search${suffix!}" method="post">
+<form id="search-form" class="form-horizontal" action="${ctx!}/platform/product/search${suffix!}?method=${method!}" method="post">
     <input type="hidden" name="t" value="${t!}" />
     <div class="well" style="float: left; margin: 0px 0px 10px 0px; width: 100%">
         <div class="input-group col-md-2" style="float: left;margin-left: 20px;">
@@ -135,7 +135,7 @@
     <!-- <tr>
         <th colspan="6">dsadsa</th>
     </tr> -->
-    <tr>
+
         <th>商品名称</th>
         <th>商品卖点信息</th>
         <th>供货基地</th>
@@ -146,6 +146,12 @@
         <th>上架时间</th>
         <th>下架时间</th>
         <th>状态</th>
+        <#if method?? && method == '4'>
+        <th>驳回备注</th>
+        </#if>
+        <#if method?? && (method == '3' ||method == '2')>
+        <th>操作</th>
+        </#if>
     </tr>
     </thead>
     <tbody>
@@ -161,11 +167,20 @@
         <td>${item.list_time!}</td>
         <td>${item.delist_time!}</td>
         <td>${item.statusText!}</td>
+        <#if method?? && method == '4'>
+        <th>${item.remark!}</th>
+        </#if>
+        <#if method?? && method == '3'>
+        <th><a href="${ctx!}/platform/product/view${suffix!}?id=${item.id!}">审核</a><br/></th>
+        </#if>
+        <#if method?? && method == '2'>
+        <th><a href="${ctx!}/platform/product/remove${suffix!}?id=${item.id!}">立即下架</a><br/></th>
+        </#if>
     </tr>
     </#list>
     </tbody>
 </table>
-<@pager pageUrl="${ctx!}/platform/product/search${suffix!}" formId="search-form" />
+<@pager pageUrl="${ctx!}/platform/product/search${suffix!}?method=${method!}" formId="search-form" />
 <#else />
 <div class="well well-sm text-center" style="margin-top: 90px">暂时没有数据.</div>
 <!-- 数据显示区开始结束 -->

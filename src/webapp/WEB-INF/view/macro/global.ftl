@@ -181,11 +181,7 @@
             <!-- #section:basics/navbar.layout.brand -->
             <a href="${ctx!}/" class="navbar-brand">
                 <small>
-				<#if system_bottom_logo??>
-                    <img src="${system_left_top_logo!}" height="25px">
-				<#else />
                     <i class="fa fa-pagelines"></i>
-				</#if>
                     &nbsp;&nbsp;${project_name!}</small>
                 <!--<small><img src="${ctx!}${syslogo!}"><small class="sub-brand">后台系统</small></small>-->
             </a>
@@ -703,12 +699,9 @@
     <div class="footer">
         <div class="footer-inner">
             <div class="footer-content">
-			<#if system_bottom_logo??>
-                <img src="${system_bottom_logo!}" height="16px" style="vertical-align: sub">
-			<#else />
+
                 <i class="ace-icon fa fa-pagelines green"></i>
-			</#if>
-			${system_copyright!}
+                Copyright ? 2018
                 <!-- gritter 弹窗点击 -->
                 <button id="${gritter_type!}" style="display:none"></button>
                 <div id="dialog-confirm" class="hide">

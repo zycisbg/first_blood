@@ -1,0 +1,117 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<@wdatePicker/>
+<@fancybox/>
+<@validate/>
+<!-- 操作表头开始 -->
+<ul class="nav nav-tabs">
+	<li><a href="${ctx!}/platform/product/search${suffix!}?method=3"><i class="ace-icon glyphicon glyphicon-list" style="color:${tabStyle!}"></i>申请上架的商品</a></li>
+	<li class="active"><a href="javascript:;"><i class="ace-icon glyphicon glyphicon-edit" style="color:${tabStyle!}"></i>审核商品</a></li>
+</ul>
+<br />
+<!-- 操作表头结束 -->
+
+<@alertMsg />
+<div class="space visible-xs"></div>
+<!-- 表单开始 -->
+<form class="form-horizontal bt-validate" id="search-form" role="form" action="" method="post">
+
+
+	<input type="hidden" name="id" value="${model.id!}" />
+
+
+<!-- 表单项开始 -->
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="content_name"><i class="rr">*</i>商品名称:</label>
+	<div class="col-md-6">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,messages:{required:'内容标题'}}" type="text" id="content_name" name="model.name" value="${model.name!}" maxlength="15" btvd-type="required" disabled>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="url"><i class="rr">*</i>商品卖点信息:</label>
+	<div class="col-md-8">
+		<span class="input-icon">
+			<input class="input-xlarge tooltip-warning {required:true,messages:{required:'请输入栏目链接'}}" type="text" id="url" name="model.sell_point" value="${model.sell_point!}" disabled>
+		</span>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="shareUrl"><i class="rr">*</i>商品价格:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,messages:{required:'请输入栏目分享链接'}}" type="text" id="shareUrl" name="model.price" value="${model.price!}" btvd-type="required" disabled>
+		</span>
+
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="shareUrl"><i class="rr">*</i>商品数量:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,messages:{required:'请输入栏目分享链接'}}" type="text" id="num" name="model.num" value="${model.num!}" btvd-type="required" disabled>
+		</span>
+
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="shareUrl"><i class="rr">*</i>添加时间:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input class="input-xlarge {required:true,messages:{required:'请输入栏目分享链接'}}" type="text" id="create_time" name="model.create_time" value="${model.create_time!}" btvd-type="required" disabled>
+		</span>
+
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="content"><i class="rr">*</i>商品描述:</label>
+	<div class="col-md-4">
+	<span class="input-icon">
+		<textarea class="input-xlarge {required:true,messages:{required:'请输入栏目分享内容'}}" type="text" id="content" name="model.description" btvd-type="required" disabled>${model.description!}</textarea>
+	</span>
+	</div>
+</div>
+
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="content"><i class="rr">*</i>商品图片:</label>
+	<div class="col-md-4">
+		<input id="banner" name="picture" style="display: none"/>
+		<img src="${model.pic_url!}" height="200" width="200">
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-md-2 control-label no-padding-right" for="shareUrl"><i class="rr">*</i>拒绝信息:</label>
+	<div class="col-md-4">
+		<span class="input-icon">
+			<input  type="text" id="remark" name="remark" value=""  >(审核通过不用填写)
+		</span>
+
+	</div>
+</div>
+
+<div class="wizard-actions">
+	<div class="col-md-offset-2 col-md-10">
+		<button class="btn btn-primary btn-xs col-md-2" type="submit" data-loading-text="处理中..." onclick="exportTo('pass');">
+			<span class="bigger-110"><i class="ace-icon fa fa-save"></i>审核通过</span>
+		</button>
+
+		<button class="btn btn-xs col-md-2" type="submit" data-loading-text="处理中..." style="margin-left: 20px;" onclick="exportTo('noPass');">
+			<span class="bigger-110"><i class="ace-icon fa fa-save"></i>审核拒绝</span>
+		</button>
+
+
+</div>
+</div>
+</form>
+<script type="text/javascript">
+    function exportTo(name){
+        var ff = document.getElementById("search-form");
+        ff.action = '${ctx!}/platform/product/own${suffix!}?status='+name;
+		ff.submit();
+    }
+
+
+</script>
+<!-- 表单项结束 -->
+</@mainLayout>

@@ -1,0 +1,160 @@
+<#include "../../macro/global.ftl" />
+<@mainLayout>
+<@datepicker />
+<!-- 操作表头开始 -->
+
+<!-- 操作表头结束 -->
+
+<!-- 搜索表单开始 -->
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#sure-date-range-picker').daterangepicker({
+            <#if startTime??>startDate:"${startTime!}",</#if>
+        <#if endTime??>endDate:"${endTime!}",</#if>
+        'applyClass' : 'btn-sm btn-success',
+            'cancelClass' : 'btn-sm btn-default',
+            //timePicker : true, //是否显示小时和分钟
+            minDate:'2015-05-01',
+            ranges : {
+            //'最近1小时': [moment().subtract('hours',1), moment()],
+            '今日': [moment().startOf('day'), moment()],
+                '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
+                '最近7日': [moment().subtract('days', 6), moment()],
+                '最近30日': [moment().subtract('days', 29), moment()]
+        },
+        //maxDate = false,
+        locale: {
+            applyLabel : '确定',
+                cancelLabel : '取消',
+                fromLabel : '起始时间',
+                toLabel : '结束时间',
+                customRangeLabel : '自定义',
+                daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+                monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',
+                '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                firstDay : 1
+        },
+        format:'YYYY-MM-DD'
+        //this.applyClass = 'btn-success',
+        //this.cancelClass = 'btn-default'
+    }, function(start, end, label) {//格式化日期显示框
+            var s = start.format('YYYY-MM-DD');
+            var e = end.format('YYYY-MM-DD');
+            $("#startTime").val(s);
+            $("#endTime").val(e);
+            $("#date-range").val(s+" - "+e);
+        });
+
+        $('#sure-time-range-picker').daterangepicker({
+            <#if startTime??>startDate:"${startTime!}",</#if>
+        <#if endTime??>endDate:"${endTime!}",</#if>
+        'applyClass' : 'btn-sm btn-success',
+            'cancelClass' : 'btn-sm btn-default',
+            //timePicker : true, //是否显示小时和分钟
+            minDate:'2015-05-01',
+            ranges : {
+            //'最近1小时': [moment().subtract('hours',1), moment()],
+            '今日': [moment().startOf('day'), moment()],
+                '昨日': [moment().subtract('days', 1).startOf('day'), moment().subtract('days', 1).endOf('day')],
+                '最近7日': [moment().subtract('days', 6), moment()],
+                '最近30日': [moment().subtract('days', 29), moment()]
+        },
+        //maxDate = false,
+        locale: {
+            applyLabel : '确定',
+                cancelLabel : '取消',
+                fromLabel : '起始时间',
+                toLabel : '结束时间',
+                customRangeLabel : '自定义',
+                daysOfWeek : [ '日', '一', '二', '三', '四', '五', '六' ],
+                monthNames : [ '一月', '二月', '三月', '四月', '五月', '六月',
+                '七月', '八月', '九月', '十月', '十一月', '十二月' ],
+                firstDay : 1
+        },
+        format:'YYYY-MM-DD'
+        //this.applyClass = 'btn-success',
+        //this.cancelClass = 'btn-default'
+    }, function(start, end, label) {//格式化日期显示框
+            var s = start.format('YYYY-MM-DD');
+            var e = end.format('YYYY-MM-DD');
+            $("#startTime").val(s);
+            $("#endTime").val(e);
+            $("#date-range").val(s+" - "+e);
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#startTime").datepicker({
+            format:'yyyy-mm-dd'
+        });
+        $("#endTime").datepicker({
+            format:'yyyy-mm-dd'
+        });
+    });
+</script>
+<form id="search-form" class="form-horizontal" action="${ctx!}/platform/buyer/search${suffix!}?method=${method!}" method="post">
+    <input type="hidden" name="t" value="${t!}" />
+    <div class="well" style="float: left; margin: 0px 0px 10px 0px; width: 100%">
+        <div class="input-group col-md-2" style="float: left;margin-left: 20px;">
+            <input type="text" name="nickName" value="${nickName!}" class="input-xlarge" placeholder="微信昵称" />
+        </div>
+        <div class="input-group col-md-2" style="float: left;margin-left: 20px;">
+            <input type="text" name="mobileNumber" value="${mobileNumber!}" class="input-xlarge" placeholder="电话号码" />
+        </div>
+        <div style="float: left;margin-left: 20px;">
+            <i class="ace-icon fa fa-calendar"></i>
+            <input class="rdcss" type="text" name="lastLoginTime" id="sure-date-range-picker" placeholder="最后登录时间" value="${lastLoginTime!}"/>
+        </div>
+
+<div style="float: right; margin-left: 20px;margin-top: 20px;">
+    <button class="btn btn-white btn-default btn-round" onclick="exportTo('search');">
+        <i class="ace-icon fa fa-search green"></i> 查 询
+    </button>
+</div>
+
+</div>
+</div>
+</form>
+<script>
+    function exportTo(name){
+        var ff = document.getElementById("search-form");
+        ff.action = '${ctx!}/platform/buyer/'+name+'${suffix!}';
+        ff.submit();
+    }
+</script>
+<@alertMsg />
+<!-- 搜索表单开始 -->
+<!-- 数据显示区开始 -->
+<#if (page.list?size > 0)>
+
+<table id="simple-table" class="table table-striped table-bordered table-hover dataTable" style="margin-bottom: 20px;">
+    <thead>
+    <!-- <tr>
+        <th colspan="6">dsadsa</th>
+    </tr> -->
+        <th>微信昵称</th>
+        <th>手机号码</th>
+        <th>最后登录时间</th>
+        <th>注册时间</th>
+        <th>性别</th>
+    </tr>
+    </thead>
+    <tbody>
+    <#list page.list as item>
+    <tr>
+        <td>${item.nickName!}</td>
+        <td>${item.mobile!}</td>
+        <td>${item.last_login_time!}</td>
+        <td>${item.register_time!}</td>
+        <td>${item.sexText!}</td>
+    </tr>
+    </#list>
+    </tbody>
+</table>
+<@pager pageUrl="${ctx!}/platform/buyer/search${suffix!}?method=${method!}" formId="search-form" />
+<#else />
+<div class="well well-sm text-center" style="margin-top: 90px">暂时没有数据.</div>
+<!-- 数据显示区开始结束 -->
+</#if>
+</@mainLayout>

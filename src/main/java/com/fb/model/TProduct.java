@@ -31,6 +31,8 @@ public class TProduct extends Model<TProduct> {
             mSql += " and u.realname like '%" + username + "%'";
         }
 
-        return paginate(ps.getPageNumber(), ps.getPageSize(), "select p.*,u.realname,case when status = '1' then '待上架' else '已上架' end as statusText ","from t_product p left join t_xcx_user u on p.user_id = u.id where 1=1 "+mSql+ps.toString());
+        return paginate(ps.getPageNumber(), ps.getPageSize(),
+                "select p.*,u.realname,case when p.status = '1' then '待上架' when p.status = '2' then '已上架' when p.status = '3' then '申请上架中' else '已驳回' end as statusText ",
+                "from t_product p left join t_xcx_user u on p.user_id = u.id where 1=1 "+mSql+ps.toString());
     }
 }
