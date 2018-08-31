@@ -7,6 +7,7 @@
     <groupId>com.zyc.first_blood</groupId>
     <artifactId>first_blood</artifactId>
     <version>1.0</version>
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
@@ -259,6 +260,15 @@
                             <extdirs>src/main/webapp/WEB-INF/lib</extdirs>
                             <bootclasspath>${java.home}/lib/rt.jar${path.separator}${java.home}/lib/jce.jar</bootclasspath>
                         </compilerArguments>
+
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.6</version>
+                    <configuration>
+                        <warSourceDirectory>webapp</warSourceDirectory>
+                        <webXml>src/webapp/WEB-INF/web.xml</webXml>
                     </configuration>
                 </plugin>
             </plugins>
